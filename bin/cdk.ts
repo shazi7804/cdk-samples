@@ -3,6 +3,7 @@ import * as cdk from '@aws-cdk/core';
 import { VpcSimpleCreate } from '../lib/vpc';
 import { DirectoryIdentityCore } from '../lib/directory_service';
 import { DataLakeCore } from '../lib/datalake';
+import { EksCore, EksSpotCore } from '../lib/eks';
 import { GithubEnterPriseServerIntegrationCodeFamily } from '../lib/github_ enterprise_codebuild_eks'
 
 const app = new cdk.App();
@@ -27,6 +28,17 @@ new GithubEnterPriseServerIntegrationCodeFamily(app, 'GithubEnterPriseServerInte
     keypair_name: app.node.tryGetContext('keypair_name'),
     githubes_acm_arn: app.node.tryGetContext('githubes_acm_arn'),
     githubes_domain: app.node.tryGetContext('githubes_domain'),
+})
+
+new EksCore(app, 'EksCore', {
+    env,
+    cluster_version: app.node.tryGetContext('eks_cluster_version'),
+})
+
+new EksSpotCore(app, 'EksSpotCore', {
+    env,
+    cluster_version: app.node.tryGetContext('eks_cluster_version'),
+    cluster_spot_price: app.node.tryGetContext('eks_cluster_spot_price'),
 })
 
 app.synth();
