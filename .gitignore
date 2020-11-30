@@ -9,6 +9,3 @@ cdk.out
 
 # Parcel default cache directory
 .parcel-cache
-
-# CDK context
-cdk.context.json

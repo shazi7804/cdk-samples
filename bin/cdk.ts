@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 import * as cdk from '@aws-cdk/core';
+import { ImportResources, ImportCloudFormationStack } from '../lib/import';
 import { VpcSimpleCreate } from '../lib/vpc';
 import { DirectoryIdentityCore } from '../lib/directory_service';
+import { CodePipelineDeployEcrImageStack } from '../lib/codepipeline';
 import { DataLakeCore } from '../lib/datalake';
 import { EksCore, EksSpotCore } from '../lib/eks';
+import { EcsFargateCore } from '../lib/ecs-fargate';
 import { GithubEnterPriseServerIntegrationCodeFamily } from '../lib/github_ enterprise_codebuild_eks'
 
 const app = new cdk.App();
@@ -16,29 +19,47 @@ const env = {
 new VpcSimpleCreate(app, 'vpcSample');
 new DirectoryIdentityCore(app, 'DirectoryIdentityCore', { env })
 
-new DataLakeCore(app, 'DataLakeCore', {
+// new DataLakeCore(app, 'DataLakeCore', {
+//     env,
+//     datalake_lakeformation_admin_arn: app.node.tryGetContext('datalake_lakeformation_admin_arn'),
+//     datalake_starter_bucket_name: app.node.tryGetContext('datalake_starter_bucket_name')
+// })
+
+// new GithubEnterPriseServerIntegrationCodeFamily(app, 'GithubEnterPriseServerIntegrationCodeFamily', {
+//     env,
+//     myip_lists: app.node.tryGetContext('myip_lists'),
+//     keypair_name: app.node.tryGetContext('keypair_name'),
+//     githubes_acm_arn: app.node.tryGetContext('githubes_acm_arn'),
+//     githubes_domain: app.node.tryGetContext('githubes_domain'),
+// })
+
+// CodePipeline
+new CodePipelineDeployEcrImageStack(app, 'CodePipelineDeployEcrImageStack', { env });
+
+new EcsFargateCore(app, 'EcsFargateCore', {
     env,
-    datalake_lakeformation_admin_arn: app.node.tryGetContext('datalake_lakeformation_admin_arn'),
-    datalake_starter_bucket_name: app.node.tryGetContext('datalake_starter_bucket_name')
+    cluster_name: app.node.tryGetContext('ecs_cluster_name'),
 })
 
-new GithubEnterPriseServerIntegrationCodeFamily(app, 'GithubEnterPriseServerIntegrationCodeFamily', {
-    env,
-    myip_lists: app.node.tryGetContext('myip_lists'),
-    keypair_name: app.node.tryGetContext('keypair_name'),
-    githubes_acm_arn: app.node.tryGetContext('githubes_acm_arn'),
-    githubes_domain: app.node.tryGetContext('githubes_domain'),
-})
-
+// EKS
 new EksCore(app, 'EksCore', {
     env,
     cluster_version: app.node.tryGetContext('eks_cluster_version'),
 })
 
-new EksSpotCore(app, 'EksSpotCore', {
+new EksSpotCore(app, 'EksSpotCore-20201129', {
     env,
     cluster_version: app.node.tryGetContext('eks_cluster_version'),
     cluster_spot_price: app.node.tryGetContext('eks_cluster_spot_price'),
+    cluster_spot_instance_type: app.node.tryGetContext('eks_cluster_spot_instance_type'),
+    cluster_spot_instance_min_capacity: app.node.tryGetContext('cluster_spot_instance_min_capacity'),
 })
+
+// Import Examples
+new ImportResources(app, 'ImportExistResource', { env });
+
+// before create cloudformation stack name same of 'ImportExistCloudFormationStack'
+new ImportCloudFormationStack(app, 'ImportExistCloudFormationStack', { env });
+
 
 app.synth();

@@ -1,0 +1,69 @@
+{
+  "eks_cluster_version": "1.18",
+  "eks_cluster_spot_price": "0.1",
+  "eks_cluster_spot_instance_type": "t3.xlarge",
+  "eks_cluster_spot_instance_min_capacity": 2,
+  "availability-zones:account=381354187112:region=us-east-1": [
+    "us-east-1a",
+    "us-east-1b",
+    "us-east-1c",
+    "us-east-1d",
+    "us-east-1e",
+    "us-east-1f"
+  ],
+  "vpc-provider:account=381354187112:filter.tag:Name=vpcSample/Vpc:region=us-east-1:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-0894dc8b776f3d54a",
+    "vpcCidrBlock": "10.0.0.0/16",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-02820f0eb8783aa24",
+            "cidr": "10.0.0.0/18",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-0a57af87fe00ae751"
+          },
+          {
+            "subnetId": "subnet-0ffd67cb819753989",
+            "cidr": "10.0.64.0/18",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-00a7f6d5e1e54a0d9"
+          }
+        ]
+      },
+      {
+        "name": "Private",
+        "type": "Private",
+        "subnets": [
+          {
+            "subnetId": "subnet-065ae5a7d2ab38523",
+            "cidr": "10.0.128.0/18",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-014ceef4ae8cd7402"
+          },
+          {
+            "subnetId": "subnet-01c178f873109c8ea",
+            "cidr": "10.0.192.0/18",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-03112d8cb1e14f24d"
+          }
+        ]
+      }
+    ]
+  },
+  "availability-zones:account=026625820024:region=us-east-1": [
+    "us-east-1a",
+    "us-east-1b",
+    "us-east-1c",
+    "us-east-1d",
+    "us-east-1e",
+    "us-east-1f"
+  ],
+  "availability-zones:account=381354187112:region=us-west-1": [
+    "us-west-1a",
+    "us-west-1b"
+  ]
+}

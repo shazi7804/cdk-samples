@@ -1,0 +1,11 @@
+Resources:
+  ExistBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join ["-",['cfn-exist-bucket',!Ref "AWS::AccountId"]]
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+      Tags:
+        - Key: version
+          Value: 'v1'
