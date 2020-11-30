@@ -57,8 +57,6 @@ new EksSpotCore(app, 'EksSpotCore-20201129', {
 
 // Import Examples
 new ImportResources(app, 'ImportExistResource', { env });
-
-// before create cloudformation stack name same of 'ImportExistCloudFormationStack'
 new ImportCloudFormationStack(app, 'ImportExistCloudFormationStack', { env });
 
 

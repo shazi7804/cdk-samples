@@ -6,7 +6,9 @@ export class ImportResources extends cdk.Stack {
     constructor(scope: cdk.App, id: string, props?: cdk.StageProps) {
         super(scope, id, props);
 
-        const existBucket = new s3.Bucket(this, 'ExistBucket')
+        const existBucket = new s3.Bucket(this, 'ExistBucket', {
+            bucketName: 'exist-bucket-id'
+        })
     }
 }
 
