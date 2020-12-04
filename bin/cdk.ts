@@ -7,6 +7,7 @@ import { CodePipelineDeployEcrImageStack } from '../lib/codepipeline';
 import { DataLakeCore } from '../lib/datalake';
 import { EksCore, EksSpotCore } from '../lib/eks';
 import { EcsFargateCore } from '../lib/ecs-fargate';
+import { VpcClienVpnStack } from '../lib/client-vpn';
 import { GithubEnterPriseServerIntegrationCodeFamily } from '../lib/github_ enterprise_codebuild_eks'
 
 const app = new cdk.App();
@@ -25,13 +26,20 @@ new DirectoryIdentityCore(app, 'DirectoryIdentityCore', { env })
 //     datalake_starter_bucket_name: app.node.tryGetContext('datalake_starter_bucket_name')
 // })
 
-// new GithubEnterPriseServerIntegrationCodeFamily(app, 'GithubEnterPriseServerIntegrationCodeFamily', {
-//     env,
-//     myip_lists: app.node.tryGetContext('myip_lists'),
-//     keypair_name: app.node.tryGetContext('keypair_name'),
-//     githubes_acm_arn: app.node.tryGetContext('githubes_acm_arn'),
-//     githubes_domain: app.node.tryGetContext('githubes_domain'),
-// })
+new GithubEnterPriseServerIntegrationCodeFamily(app, 'GithubEnterPriseServerIntegrationCodeFamily', {
+    env,
+    myip: app.node.tryGetContext('myip'),
+    keypair_name: app.node.tryGetContext('keypair_name'),
+})
+
+
+new VpcClienVpnStack(app, 'VpcClienVpnStack', {
+    env,
+    client_cidr: app.node.tryGetContext('vpc_vpn_client_cidr'),
+    client_root_arn: app.node.tryGetContext('vpc_vpn_client_root_arn'),
+    server_root_arn: app.node.tryGetContext('vpc_vpn_server_root_arn'),
+})
+
 
 // CodePipeline
 new CodePipelineDeployEcrImageStack(app, 'CodePipelineDeployEcrImageStack', { env });
@@ -58,6 +66,5 @@ new EksSpotCore(app, 'EksSpotCore-20201129', {
 // Import Examples
 new ImportResources(app, 'ImportExistResource', { env });
 new ImportCloudFormationStack(app, 'ImportExistCloudFormationStack', { env });
-
 
 app.synth();
