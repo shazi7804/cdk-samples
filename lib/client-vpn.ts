@@ -40,9 +40,13 @@ export class VpcClienVpnStack extends cdk.Stack {
             dnsServers: ["8.8.8.8", "8.8.4.4"],
         })
 
-        const association = new ec2.CfnClientVpnTargetNetworkAssociation(this, 'ClientVpnNetworkAssociation', {
+        new ec2.CfnClientVpnTargetNetworkAssociation(this, 'ClientVpnNetworkAssociation1', {
             clientVpnEndpointId: vpnEndpoint.ref,
             subnetId: vpc.privateSubnets[0].subnetId
+        })
+        new ec2.CfnClientVpnTargetNetworkAssociation(this, 'ClientVpnNetworkAssociation2', {
+            clientVpnEndpointId: vpnEndpoint.ref,
+            subnetId: vpc.privateSubnets[1].subnetId
         })
 
         new ec2.CfnClientVpnAuthorizationRule(this, 'Authz', {

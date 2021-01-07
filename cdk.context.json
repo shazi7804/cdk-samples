@@ -1,10 +1,4 @@
 {
-  "myip": "1.34.185.2/32",
-  "keypair_name": "scottliao",
-  "eks_cluster_version": "1.18",
-  "eks_cluster_spot_price": "0.1",
-  "eks_cluster_spot_instance_type": "t3.xlarge",
-  "eks_cluster_spot_instance_min_capacity": 2,
   "vpc_vpn_client_cidr": "10.0.252.0/22",
   "vpc_vpn_client_root_arn": "arn:aws:acm:us-east-1:381354187112:certificate/de9f1c84-83cc-48ae-b733-f3131d99d017",
   "vpc_vpn_server_root_arn": "arn:aws:acm:us-east-1:381354187112:certificate/9f7d31d0-e662-44ac-8c13-b8be8c76533e",
@@ -17,49 +11,68 @@
     "us-east-1f"
   ],
   "vpc-provider:account=381354187112:filter.tag:Name=vpcSample/Vpc:region=us-east-1:returnAsymmetricSubnets=true": {
-    "vpcId": "vpc-0894dc8b776f3d54a",
+    "vpcId": "vpc-05c3438e678ec0b90",
     "vpcCidrBlock": "10.0.0.0/16",
     "availabilityZones": [],
     "subnetGroups": [
       {
-        "name": "Public",
-        "type": "Public",
+        "name": "IsolatedSubnet",
+        "type": "Isolated",
         "subnets": [
           {
-            "subnetId": "subnet-02820f0eb8783aa24",
-            "cidr": "10.0.0.0/18",
+            "subnetId": "subnet-081f458ba68bee286",
+            "cidr": "10.0.64.0/20",
             "availabilityZone": "us-east-1a",
-            "routeTableId": "rtb-0a57af87fe00ae751"
+            "routeTableId": "rtb-0c2da6e330b9e0130"
           },
           {
-            "subnetId": "subnet-0ffd67cb819753989",
-            "cidr": "10.0.64.0/18",
+            "subnetId": "subnet-0259b069f6ba12c1d",
+            "cidr": "10.0.80.0/20",
             "availabilityZone": "us-east-1b",
-            "routeTableId": "rtb-00a7f6d5e1e54a0d9"
+            "routeTableId": "rtb-0250d465b5e7ead01"
           }
         ]
       },
       {
-        "name": "Private",
+        "name": "PublicSubnet",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-088b2af56aef1a7dd",
+            "cidr": "10.0.0.0/20",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-02e57105f70242fe1"
+          },
+          {
+            "subnetId": "subnet-0e7c4727f2891c6ab",
+            "cidr": "10.0.16.0/20",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-02857b88b42a2315f"
+          }
+        ]
+      },
+      {
+        "name": "PrivateSubnet",
         "type": "Private",
         "subnets": [
           {
-            "subnetId": "subnet-065ae5a7d2ab38523",
-            "cidr": "10.0.128.0/18",
+            "subnetId": "subnet-0f179555c54ca871e",
+            "cidr": "10.0.32.0/20",
             "availabilityZone": "us-east-1a",
-            "routeTableId": "rtb-014ceef4ae8cd7402"
+            "routeTableId": "rtb-0a9d615100da975f2"
           },
           {
-            "subnetId": "subnet-01c178f873109c8ea",
-            "cidr": "10.0.192.0/18",
+            "subnetId": "subnet-0b5d5f4ceff9378a9",
+            "cidr": "10.0.48.0/20",
             "availabilityZone": "us-east-1b",
-            "routeTableId": "rtb-03112d8cb1e14f24d"
+            "routeTableId": "rtb-04564d52dc22e18f6"
           }
         ]
       }
     ]
   },
-  "availability-zones:account=026625820024:region=us-east-1": [
+  "ami:account=381354187112:filters.image-type.0=machine:filters.name.0=GitHub Enterprise Server*:filters.state.0=available:owners.0=895557238572:region=us-east-1": "ami-080dfc718384bba34",
+  "availability-zones:account=856547261104:region=us-east-1": [
     "us-east-1a",
     "us-east-1b",
     "us-east-1c",
@@ -67,9 +80,5 @@
     "us-east-1e",
     "us-east-1f"
   ],
-  "availability-zones:account=381354187112:region=us-west-1": [
-    "us-west-1a",
-    "us-west-1b"
-  ],
-  "ami:account=381354187112:filters.image-type.0=machine:filters.name.0=GitHub Enterprise Server*:filters.state.0=available:owners.0=895557238572:region=us-east-1": "ami-02341d4d3c2a535dc"
+  "ami:account=856547261104:filters.image-type.0=machine:filters.name.0=GitHub Enterprise Server*:filters.state.0=available:owners.0=895557238572:region=us-east-1": "ami-080dfc718384bba34"
 }

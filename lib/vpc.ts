@@ -18,12 +18,75 @@ export class VpcProvider extends cdk.Stack {
 }
 
 // 
+export interface VpcSimpleCreateProps extends cdk.StackProps {
+    readonly cidr?: string;
+}
+
 export class VpcSimpleCreate extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props?: cdk.StageProps) {
+    constructor(scope: cdk.App, id: string, props: VpcSimpleCreateProps) {
         super(scope, id, props);
         const vpc = new ec2.Vpc(this, 'Vpc', {
-            maxAzs: 3,
+            cidr: props.cidr || "10.0.0.0/16",
+            maxAzs: 2,
             natGateways: 1,
+            subnetConfiguration: [
+                {
+                    name: "PublicSubnet",
+                    cidrMask: 20,
+                    subnetType: ec2.SubnetType.PUBLIC
+                },
+                {
+                    name: "PrivateSubnet",
+                    cidrMask: 20,
+                    subnetType: ec2.SubnetType.PRIVATE
+                },
+                {
+                    name: "IsolatedSubnet",
+                    cidrMask: 20,
+                    subnetType: ec2.SubnetType.ISOLATED
+                }
+            ]
         });
+
+        // VPC Endpoints
+        /// Gateways
+        const s3Vpce = new ec2.GatewayVpcEndpoint(this, 'S3-Vpce', {
+            vpc, service: ec2.GatewayVpcEndpointAwsService.S3
+        })
+        const ddbVpce = new ec2.GatewayVpcEndpoint(this, 'DynamoDB-Vpce', {
+            vpc, service: ec2.GatewayVpcEndpointAwsService.DYNAMODB
+        })
+
+        /// Interfaces
+        const ec2Vpce = new ec2.InterfaceVpcEndpoint(this, 'EC2-Vpce', {
+            vpc, service: ec2.InterfaceVpcEndpointAwsService.EC2,
+        })
+        const ecrVpce = new ec2.InterfaceVpcEndpoint(this, 'ECR-Vpce', {
+            vpc, service: ec2.InterfaceVpcEndpointAwsService.ECR,
+        })
+        const ecrDkr2Vpce = new ec2.InterfaceVpcEndpoint(this, 'ECR-Dkr-Vpce', {
+            vpc, service: ec2.InterfaceVpcEndpointAwsService.ECR_DOCKER,
+        })
+        const ecsVpce = new ec2.InterfaceVpcEndpoint(this, 'ECS-Vpce', {
+            vpc, service: ec2.InterfaceVpcEndpointAwsService.ECS,
+        })
+        const ecsAgentVpce = new ec2.InterfaceVpcEndpoint(this, 'ECS-Agent-Vpce', {
+            vpc, service: ec2.InterfaceVpcEndpointAwsService.ECS_AGENT,
+        })
+        const ssmVpce = new ec2.InterfaceVpcEndpoint(this, 'SSM-Vpce', {
+            vpc, service: ec2.InterfaceVpcEndpointAwsService.SSM,
+        })
+        const ssmMsgVpce = new ec2.InterfaceVpcEndpoint(this, 'SSM-MESSAGES-Vpce', {
+            vpc, service: ec2.InterfaceVpcEndpointAwsService.SSM_MESSAGES,
+        })
+        const stsVpce = new ec2.InterfaceVpcEndpoint(this, 'STS-Vpce', {
+            vpc, service: ec2.InterfaceVpcEndpointAwsService.STS,
+        })
+        const cloudwatchVpce = new ec2.InterfaceVpcEndpoint(this, 'Cloudwatch-Vpce', {
+            vpc, service: ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH,
+        })
+        const cloudwatchLogsVpce = new ec2.InterfaceVpcEndpoint(this, 'Cloudwatch-Logs-Vpce', {
+            vpc, service: ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
+        })
     }
 }

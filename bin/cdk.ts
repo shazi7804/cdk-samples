@@ -2,10 +2,12 @@
 import * as cdk from '@aws-cdk/core';
 import { ImportResources, ImportCloudFormationStack } from '../lib/import';
 import { VpcSimpleCreate } from '../lib/vpc';
+import { TransitGatewayStack } from '../lib/transit-gateway';
+import { ApiGatewayCognitoStack } from '../lib/api-gateway';
 import { DirectoryIdentityCore } from '../lib/directory_service';
-import { CodePipelineDeployEcrImageStack } from '../lib/codepipeline';
+import { CodePipelineDeployEcrImageStack, CodePipelineStepfunctionStack } from '../lib/codepipeline';
 import { DataLakeCore } from '../lib/datalake';
-import { EksCore, EksSpotCore } from '../lib/eks';
+import { EksCore } from '../lib/eks';
 import { EcsFargateCore } from '../lib/ecs-fargate';
 import { VpcClienVpnStack } from '../lib/client-vpn';
 import { GithubEnterPriseServerIntegrationCodeFamily } from '../lib/github_ enterprise_codebuild_eks'
@@ -17,7 +19,19 @@ const env = {
     account: app.node.tryGetContext('account') || process.env.CDK_INTEG_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT
 };
 
-new VpcSimpleCreate(app, 'vpcSample');
+// Network stack
+new VpcSimpleCreate(app, 'vpcSample', { env });
+new VpcClienVpnStack(app, 'VpcClienVpnStack', {
+    env,
+    client_cidr: app.node.tryGetContext('vpc_vpn_client_cidr'),
+    client_root_arn: app.node.tryGetContext('vpc_vpn_client_root_arn'),
+    server_root_arn: app.node.tryGetContext('vpc_vpn_server_root_arn'),
+})
+new TransitGatewayStack(app, 'TransitGatewayStack', { env });
+
+// Applications
+new ApiGatewayCognitoStack(app, 'ApiGatewayCognitoStack', { env });
+
 new DirectoryIdentityCore(app, 'DirectoryIdentityCore', { env })
 
 // new DataLakeCore(app, 'DataLakeCore', {
@@ -32,35 +46,23 @@ new GithubEnterPriseServerIntegrationCodeFamily(app, 'GithubEnterPriseServerInte
     keypair_name: app.node.tryGetContext('keypair_name'),
 })
 
-
-new VpcClienVpnStack(app, 'VpcClienVpnStack', {
-    env,
-    client_cidr: app.node.tryGetContext('vpc_vpn_client_cidr'),
-    client_root_arn: app.node.tryGetContext('vpc_vpn_client_root_arn'),
-    server_root_arn: app.node.tryGetContext('vpc_vpn_server_root_arn'),
-})
-
-
 // CodePipeline
 new CodePipelineDeployEcrImageStack(app, 'CodePipelineDeployEcrImageStack', { env });
-
-new EcsFargateCore(app, 'EcsFargateCore', {
-    env,
-    cluster_name: app.node.tryGetContext('ecs_cluster_name'),
-})
+new CodePipelineStepfunctionStack(app, 'CodePipelineStepfunctionStack', { env });
 
 // EKS
 new EksCore(app, 'EksCore', {
     env,
     cluster_version: app.node.tryGetContext('eks_cluster_version'),
+    cluster_instance_type: app.node.tryGetContext('eks_cluster_instance_type'),
+    cluster_spot_instance_type: app.node.tryGetContext('eks_cluster_spot_instance_type'),
+    cluster_spot_price: app.node.tryGetContext('eks_cluster_spot_price'),
+    cluster_spot_instance_min_capacity: app.node.tryGetContext('cluster_spot_instance_min_capacity'),
 })
 
-new EksSpotCore(app, 'EksSpotCore-20201129', {
+new EcsFargateCore(app, 'EcsFargateCore', {
     env,
-    cluster_version: app.node.tryGetContext('eks_cluster_version'),
-    cluster_spot_price: app.node.tryGetContext('eks_cluster_spot_price'),
-    cluster_spot_instance_type: app.node.tryGetContext('eks_cluster_spot_instance_type'),
-    cluster_spot_instance_min_capacity: app.node.tryGetContext('cluster_spot_instance_min_capacity'),
+    cluster_name: app.node.tryGetContext('ecs_cluster_name'),
 })
 
 // Import Examples
