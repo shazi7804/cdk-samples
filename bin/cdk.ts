@@ -5,12 +5,15 @@ import { VpcSimpleCreate } from '../lib/vpc';
 import { TransitGatewayStack } from '../lib/transit-gateway';
 import { ApiGatewayCognitoStack } from '../lib/api-gateway';
 import { DirectoryIdentityCore } from '../lib/directory_service';
-import { CodePipelineDeployEcrImageStack, CodePipelineStepfunctionStack } from '../lib/codepipeline';
+import { CodePipelineDeployEcrImageStack,
+         CodePipelineStepfunctionStack,
+         MultiPipelineOfApprovalStack } from '../lib/codepipeline';
 import { DataLakeCore } from '../lib/datalake';
 import { EksCore } from '../lib/eks';
 import { EcsFargateCore } from '../lib/ecs-fargate';
 import { VpcClienVpnStack } from '../lib/client-vpn';
 import { GithubEnterPriseServerIntegrationCodeFamily } from '../lib/github_ enterprise_codebuild_eks'
+import { TerraformBackendStack } from '../lib/terraform';
 
 const app = new cdk.App();
 
@@ -40,8 +43,7 @@ new DirectoryIdentityCore(app, 'DirectoryIdentityCore', { env })
 //     datalake_starter_bucket_name: app.node.tryGetContext('datalake_starter_bucket_name')
 // })
 
-new GithubEnterPriseServerIntegrationCodeFamily(app, 'GithubEnterPriseServerIntegrationCodeFamily', {
-    env,
+new GithubEnterPriseServerIntegrationCodeFamily(app, 'GithubEnterPriseServerIntegrationCodeFamily', { env,
     myip: app.node.tryGetContext('myip'),
     keypair_name: app.node.tryGetContext('keypair_name'),
 })
@@ -49,10 +51,11 @@ new GithubEnterPriseServerIntegrationCodeFamily(app, 'GithubEnterPriseServerInte
 // CodePipeline
 new CodePipelineDeployEcrImageStack(app, 'CodePipelineDeployEcrImageStack', { env });
 new CodePipelineStepfunctionStack(app, 'CodePipelineStepfunctionStack', { env });
+new MultiPipelineOfApprovalStack(app, 'MultiPipelineOfApprovalStack', { env });
+
 
 // EKS
-new EksCore(app, 'EksCore', {
-    env,
+new EksCore(app, 'EksCore', { env,
     cluster_version: app.node.tryGetContext('eks_cluster_version'),
     cluster_instance_type: app.node.tryGetContext('eks_cluster_instance_type'),
     cluster_spot_instance_type: app.node.tryGetContext('eks_cluster_spot_instance_type'),
@@ -60,10 +63,12 @@ new EksCore(app, 'EksCore', {
     cluster_spot_instance_min_capacity: app.node.tryGetContext('cluster_spot_instance_min_capacity'),
 })
 
-new EcsFargateCore(app, 'EcsFargateCore', {
-    env,
+new EcsFargateCore(app, 'EcsFargateCore', { env,
     cluster_name: app.node.tryGetContext('ecs_cluster_name'),
 })
+
+// Terraform Backend
+new TerraformBackendStack(app, 'TerraformBackendStack', { env })
 
 // Import Examples
 new ImportResources(app, 'ImportExistResource', { env });
