@@ -25,26 +25,29 @@ export class TransferFamilyServerCore extends cdk.Stack {
         const userRole = new iam.Role(this, 'AWSTransferUsersAccessRole', {
             roleName: 'AWSTransferUsersAccess',
             assumedBy: new iam.ServicePrincipal("transfer.amazonaws.com"),
-            managedPolicies: [
-                iam.ManagedPolicy.fromAwsManagedPolicyName(
-                    "service-role/AWSTransferLoggingAccess",
-                ),
-            ],
         });
 
         userRole.addToPolicy(
             new iam.PolicyStatement({
               effect: iam.Effect.ALLOW,
-              actions: [
-                  's3:GetObject',
-                  's3:GetObjectAcl',
-                  's3:GetObjectVersion',
-                  's3:PutObject',
-                  's3:PutObjectACL',
-                  's3:DeleteObject',
-                  's3:DeleteObjectVersion'
+              actions: ['s3:ListBucket'],
+              resources: [bucket.bucketArn],
+            })
+        );
+
+        userRole.addToPolicy(
+            new iam.PolicyStatement({
+                effect: iam.Effect.ALLOW,
+                actions: [
+                    's3:GetObject',
+                    's3:GetObjectAcl',
+                    's3:GetObjectVersion',
+                    's3:PutObject',
+                    's3:PutObjectACL',
+                    's3:DeleteObject',
+                    's3:DeleteObjectVersion'
                 ],
-              resources: [`${bucket.bucketArn}/*`],
+                resources: [`${bucket.bucketArn}/*`],
             })
         );
 

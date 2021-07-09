@@ -11,6 +11,7 @@ import { CodePipelineDeployEcrImageStack,
 import { CloudFrontOrginS3Core } from '../lib/cloudfront';
 import { DataLakeCore } from '../lib/datalake';
 import { TransferFamilyServerCore } from '../lib/transfer_family';
+import { S3ObjectLambdaUppercaseCore } from '../lib/s3_object_lambda';
 import { EksCore } from '../lib/eks';
 import { EcsFargateCore } from '../lib/ecs-fargate';
 import { VpcClienVpnStack } from '../lib/client_vpn';
@@ -39,10 +40,15 @@ new ApiGatewayCognitoStack(app, 'ApiGatewayCognitoStack', { env });
 
 new DirectoryIdentityCore(app, 'DirectoryIdentityCore', { env });
 
-// Transfer Family
+// S3, Transfer Family
 new TransferFamilyServerCore(app, 'TransferFamilyServerCore', {
     env
 });
+
+new S3ObjectLambdaUppercaseCore(app, 'S3ObjectLambdaUppercaseCore', {
+    env
+});
+
 
 // new DataLakeCore(app, 'DataLakeCore', {
 //     env,
