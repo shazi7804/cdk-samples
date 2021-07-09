@@ -27,7 +27,6 @@ export class GithubEnterPriseServerIntegrationCodeFamily extends cdk.Stack {
 
         // Launch an Github EnterPrise Server
         // GitHub's AWS owner ID (025577942450 for GovCloud, and 895557238572 for other regions)
-
         const ami = new ec2.LookupMachineImage({
             name:'GitHub Enterprise Server*',
             owners:['895557238572']
@@ -82,79 +81,6 @@ export class GithubEnterPriseServerIntegrationCodeFamily extends cdk.Stack {
 
         // For Manager Port
         gitSg.addIngressRule(ec2.Peer.ipv4(props.myip), ec2.Port.tcp(22), "Github Enterprise Server use tcp/port of myself.");
-
-
-
-
-        /**
-         * CodeBuild: 
-         * 1. create codebuild project
-         * 2. create policy of ECR and Codecommit
-        **/ 
-        // const webhooks: codebuild.FilterGroup[] = [
-        //     codebuild.FilterGroup.inEventOf(
-        //         codebuild.EventAction.PUSH,
-        //         codebuild.EventAction.PULL_REQUEST_MERGED
-        //     ).andBranchIs('master'),
-        // ];
-
-        // const codebuildProject = new codebuild.Project(this, "GithubBuild", {
-        //     source: codebuild.Source.gitHubEnterprise({
-        //         httpsCloneUrl: 'https://ec2-54-161-116-237.compute-1.amazonaws.com/scottlwk/github-codebuild-integrate',
-        //         branchOrRef: 'master',
-        //         // If your Github Enterprise non-self SSL connection when need enable `ignoreSslErrors`
-        //         ignoreSslErrors: true
-        //     }),
-        //     environment: {
-        //         buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_3,
-        //         privileged: true,
-        //         environmentVariables: {
-        //             AWS_ACCOUNT_ID: {
-        //               type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
-        //               value: cdk.Aws.ACCOUNT_ID
-        //             },
-        //             AWS_DEFAULT_REGION: {
-        //               type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
-        //               value: cdk.Aws.REGION
-        //             }
-        //         }
-        //     }
-        // });
-
-        // codebuild policy of ecr build
-        // const codeBuildPolicyEcr = new iam.PolicyStatement();
-        // codeBuildPolicyEcr.addAllResources()
-        // codeBuildPolicyEcr.addActions(
-        //     "ecr:GetAuthorizationToken",
-        //     "ecr:InitiateLayerUpload",
-        //     "ecr:UploadLayerPart",
-        //     "ecr:CompleteLayerUpload",
-        //     "ecr:BatchCheckLayerAvailability",
-        //     "ecr:PutImage",
-        //     "eks:DescribeCluster"
-        // )
-        // codebuildProject.addToRolePolicy(codeBuildPolicyEcr);
-
-        /** 
-        * ECR: create repository
-        * EKS: create cluster and iam role
-        **/
-        // const ecrRepository = new ecr.Repository(this, "EcrImageRepo", {
-        //     repositoryName: 'github-ent-source'
-        // });
-
-        // const mastersRole = new iam.Role(this, 'EksClusterRole', {
-        //     assumedBy: new iam.AccountRootPrincipal()
-        // });
-
-        // const eksCluster = new eks.Cluster(this, 'EksCluster', {
-        //     vpc,
-        //     mastersRole,
-        //     version: eks.KubernetesVersion.of(clusterVersion),
-        //     defaultCapacity: 2,
-        //     outputClusterName: true
-        // });
-
         
     }
 }

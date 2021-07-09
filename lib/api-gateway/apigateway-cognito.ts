@@ -33,7 +33,7 @@ export class ApiGatewayCognitoStack extends cdk.Stack {
         });
 
         const handler = new lambda.Function(this, "Lambda", {
-            code: new lambda.AssetCode("./lambda"),
+            code: new lambda.AssetCode("./samples/lambda/load_event"),
             handler: "index.handler",
             runtime: lambda.Runtime.NODEJS_12_X,
         });

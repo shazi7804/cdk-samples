@@ -9,7 +9,7 @@ export class DirectoryIdentityCore extends cdk.Stack {
 
         const vpc = VpcProvider.createSimple(this);
 
-        const activeDirectory = new ds.CfnMicrosoftAD(this, 'IdentityMicroftAD', {
+        const ad = new ds.CfnMicrosoftAD(this, 'IdentityMicroftAD', {
             name: 'scottliao.com',
             edition: 'Standard',
             password: '1qaz@WSX3edc$RFV',

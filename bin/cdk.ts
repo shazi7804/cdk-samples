@@ -8,10 +8,12 @@ import { DirectoryIdentityCore } from '../lib/directory_service';
 import { CodePipelineDeployEcrImageStack,
          CodePipelineStepfunctionStack,
          MultiPipelineOfApprovalStack } from '../lib/codepipeline';
+import { CloudFrontOrginS3Core } from '../lib/cloudfront';
 import { DataLakeCore } from '../lib/datalake';
+import { TransferFamilyServerCore } from '../lib/transfer_family';
 import { EksCore } from '../lib/eks';
 import { EcsFargateCore } from '../lib/ecs-fargate';
-import { VpcClienVpnStack } from '../lib/client-vpn';
+import { VpcClienVpnStack } from '../lib/client_vpn';
 import { GithubEnterPriseServerIntegrationCodeFamily } from '../lib/github_ enterprise_codebuild_eks'
 import { TerraformBackendStack } from '../lib/terraform';
 
@@ -35,7 +37,12 @@ new TransitGatewayStack(app, 'TransitGatewayStack', { env });
 // Applications
 new ApiGatewayCognitoStack(app, 'ApiGatewayCognitoStack', { env });
 
-new DirectoryIdentityCore(app, 'DirectoryIdentityCore', { env })
+new DirectoryIdentityCore(app, 'DirectoryIdentityCore', { env });
+
+// Transfer Family
+new TransferFamilyServerCore(app, 'TransferFamilyServerCore', {
+    env
+});
 
 // new DataLakeCore(app, 'DataLakeCore', {
 //     env,
@@ -54,7 +61,7 @@ new CodePipelineStepfunctionStack(app, 'CodePipelineStepfunctionStack', { env })
 new MultiPipelineOfApprovalStack(app, 'MultiPipelineOfApprovalStack', { env });
 
 
-// EKS
+// Container
 new EksCore(app, 'EksCore', { env,
     cluster_version: app.node.tryGetContext('eks_cluster_version'),
     cluster_instance_type: app.node.tryGetContext('eks_cluster_instance_type'),
@@ -66,6 +73,10 @@ new EksCore(app, 'EksCore', { env,
 new EcsFargateCore(app, 'EcsFargateCore', { env,
     cluster_name: app.node.tryGetContext('ecs_cluster_name'),
 })
+
+// CloudFront
+new CloudFrontOrginS3Core(app, 'CloudFrontOrginS3Core', { env })
+
 
 // Terraform Backend
 new TerraformBackendStack(app, 'TerraformBackendStack', { env })

@@ -80,5 +80,14 @@
     "us-east-1e",
     "us-east-1f"
   ],
-  "ami:account=856547261104:filters.image-type.0=machine:filters.name.0=GitHub Enterprise Server*:filters.state.0=available:owners.0=895557238572:region=us-east-1": "ami-080dfc718384bba34"
+  "ami:account=856547261104:filters.image-type.0=machine:filters.name.0=GitHub Enterprise Server*:filters.state.0=available:owners.0=895557238572:region=us-east-1": "ami-080dfc718384bba34",
+  "availability-zones:account=652010830346:region=us-east-1": [
+    "us-east-1a",
+    "us-east-1b",
+    "us-east-1c",
+    "us-east-1d",
+    "us-east-1e",
+    "us-east-1f"
+  ],
+  "ami:account=652010830346:filters.image-type.0=machine:filters.name.0=GitHub Enterprise Server*:filters.state.0=available:owners.0=895557238572:region=us-east-1": "ami-016d1124c76c29097"
 }
