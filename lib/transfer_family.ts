@@ -57,31 +57,3 @@ export class TransferFamilyServerCore extends cdk.Stack {
         });
     }
 }
-
-// ----------------------------------------------------------------
-
-export interface TransferFamilyUsersCoreProps extends cdk.StackProps {
-    readonly userName: string;
-    readonly bucketHome: string;
-    readonly transferFamilyId: string;
-    readonly sshPublicKeys: string;
-}
-
-export class TransferFamilyUserCore extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props: TransferFamilyUsersCoreProps ) {
-        super(scope, id, props);
-
-        const role = new iam.Role(this, 'TransferFamilyUsersRole', {
-            assumedBy: new iam.ServicePrincipal('transfer.amazonaws.com'),
-        })
-        role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'))
-
-        new tf.CfnUser(this, 'TransferFamilyUser', {
-            userName: props.userName,
-            homeDirectory: `/${props.bucketHome}`,
-            role: role.roleArn,
-            serverId: props.transferFamilyId,
-            sshPublicKeys: [props.sshPublicKeys]
-        })
-    }
-}
