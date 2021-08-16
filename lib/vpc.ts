@@ -58,35 +58,35 @@ export class VpcSimpleCreate extends cdk.Stack {
         })
 
         /// Interfaces
-        const ec2Vpce = new ec2.InterfaceVpcEndpoint(this, 'EC2-Vpce', {
-            vpc, service: ec2.InterfaceVpcEndpointAwsService.EC2,
-        })
-        const ecrVpce = new ec2.InterfaceVpcEndpoint(this, 'ECR-Vpce', {
-            vpc, service: ec2.InterfaceVpcEndpointAwsService.ECR,
-        })
-        const ecrDkr2Vpce = new ec2.InterfaceVpcEndpoint(this, 'ECR-Dkr-Vpce', {
-            vpc, service: ec2.InterfaceVpcEndpointAwsService.ECR_DOCKER,
-        })
-        const ecsVpce = new ec2.InterfaceVpcEndpoint(this, 'ECS-Vpce', {
-            vpc, service: ec2.InterfaceVpcEndpointAwsService.ECS,
-        })
-        const ecsAgentVpce = new ec2.InterfaceVpcEndpoint(this, 'ECS-Agent-Vpce', {
-            vpc, service: ec2.InterfaceVpcEndpointAwsService.ECS_AGENT,
-        })
-        const ssmVpce = new ec2.InterfaceVpcEndpoint(this, 'SSM-Vpce', {
-            vpc, service: ec2.InterfaceVpcEndpointAwsService.SSM,
-        })
-        const ssmMsgVpce = new ec2.InterfaceVpcEndpoint(this, 'SSM-MESSAGES-Vpce', {
-            vpc, service: ec2.InterfaceVpcEndpointAwsService.SSM_MESSAGES,
-        })
-        const stsVpce = new ec2.InterfaceVpcEndpoint(this, 'STS-Vpce', {
-            vpc, service: ec2.InterfaceVpcEndpointAwsService.STS,
-        })
-        const cloudwatchVpce = new ec2.InterfaceVpcEndpoint(this, 'Cloudwatch-Vpce', {
-            vpc, service: ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH,
-        })
-        const cloudwatchLogsVpce = new ec2.InterfaceVpcEndpoint(this, 'Cloudwatch-Logs-Vpce', {
-            vpc, service: ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
-        })
+        // const ec2Vpce = new ec2.InterfaceVpcEndpoint(this, 'EC2-Vpce', {
+        //     vpc, service: ec2.InterfaceVpcEndpointAwsService.EC2,
+        // })
+        // const ecrVpce = new ec2.InterfaceVpcEndpoint(this, 'ECR-Vpce', {
+        //     vpc, service: ec2.InterfaceVpcEndpointAwsService.ECR,
+        // })
+        // const ecrDkr2Vpce = new ec2.InterfaceVpcEndpoint(this, 'ECR-Dkr-Vpce', {
+        //     vpc, service: ec2.InterfaceVpcEndpointAwsService.ECR_DOCKER,
+        // })
+        // const ecsVpce = new ec2.InterfaceVpcEndpoint(this, 'ECS-Vpce', {
+        //     vpc, service: ec2.InterfaceVpcEndpointAwsService.ECS,
+        // })
+        // const ecsAgentVpce = new ec2.InterfaceVpcEndpoint(this, 'ECS-Agent-Vpce', {
+        //     vpc, service: ec2.InterfaceVpcEndpointAwsService.ECS_AGENT,
+        // })
+        // const ssmVpce = new ec2.InterfaceVpcEndpoint(this, 'SSM-Vpce', {
+        //     vpc, service: ec2.InterfaceVpcEndpointAwsService.SSM,
+        // })
+        // const ssmMsgVpce = new ec2.InterfaceVpcEndpoint(this, 'SSM-MESSAGES-Vpce', {
+        //     vpc, service: ec2.InterfaceVpcEndpointAwsService.SSM_MESSAGES,
+        // })
+        // const stsVpce = new ec2.InterfaceVpcEndpoint(this, 'STS-Vpce', {
+        //     vpc, service: ec2.InterfaceVpcEndpointAwsService.STS,
+        // })
+        // const cloudwatchVpce = new ec2.InterfaceVpcEndpoint(this, 'Cloudwatch-Vpce', {
+        //     vpc, service: ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH,
+        // })
+        // const cloudwatchLogsVpce = new ec2.InterfaceVpcEndpoint(this, 'Cloudwatch-Logs-Vpce', {
+        //     vpc, service: ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
+        // })
     }
 }

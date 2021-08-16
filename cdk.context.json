@@ -1,7 +1,74 @@
 {
-  "vpc_vpn_client_cidr": "10.0.252.0/22",
-  "vpc_vpn_client_root_arn": "arn:aws:acm:us-east-1:381354187112:certificate/de9f1c84-83cc-48ae-b733-f3131d99d017",
-  "vpc_vpn_server_root_arn": "arn:aws:acm:us-east-1:381354187112:certificate/9f7d31d0-e662-44ac-8c13-b8be8c76533e",
+  "availability-zones:account=026625820024:region=us-east-1": [
+    "us-east-1a",
+    "us-east-1b",
+    "us-east-1c",
+    "us-east-1d",
+    "us-east-1e",
+    "us-east-1f"
+  ],
+  "ami:account=026625820024:filters.image-type.0=machine:filters.name.0=GitHub Enterprise Server*:filters.state.0=available:owners.0=895557238572:region=us-east-1": "ami-0183089d881f27253",
+  "vpc-provider:account=026625820024:filter.tag:Name=vpcSample/Vpc:region=us-east-1:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-01af934ed1f96dc8d",
+    "vpcCidrBlock": "10.0.0.0/16",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "PublicSubnet",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-0fd0e45773aa9515a",
+            "cidr": "10.0.0.0/20",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-0125b727d01e2ee6e"
+          },
+          {
+            "subnetId": "subnet-095446a8e029bf31f",
+            "cidr": "10.0.16.0/20",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-076318e252219a9cb"
+          }
+        ]
+      },
+      {
+        "name": "PrivateSubnet",
+        "type": "Private",
+        "subnets": [
+          {
+            "subnetId": "subnet-04ca43adf22873781",
+            "cidr": "10.0.32.0/20",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-03ae0ac4b0c6b1fb7"
+          },
+          {
+            "subnetId": "subnet-0785c0fd9e9d6f3db",
+            "cidr": "10.0.48.0/20",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-038e414bb58a4833f"
+          }
+        ]
+      },
+      {
+        "name": "IsolatedSubnet",
+        "type": "Isolated",
+        "subnets": [
+          {
+            "subnetId": "subnet-089a3b55f8720c25e",
+            "cidr": "10.0.64.0/20",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-07bedfb96d937df40"
+          },
+          {
+            "subnetId": "subnet-02fbf602724922d5b",
+            "cidr": "10.0.80.0/20",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-06c066b49acefc566"
+          }
+        ]
+      }
+    ]
+  },
   "availability-zones:account=381354187112:region=us-east-1": [
     "us-east-1a",
     "us-east-1b",
@@ -15,6 +82,24 @@
     "vpcCidrBlock": "10.0.0.0/16",
     "availabilityZones": [],
     "subnetGroups": [
+      {
+        "name": "Private",
+        "type": "Private",
+        "subnets": [
+          {
+            "subnetId": "subnet-0896f365fa69d1567",
+            "cidr": "100.64.0.0/19",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-05d531e70dd7df140"
+          },
+          {
+            "subnetId": "subnet-0d819942dd780c93c",
+            "cidr": "100.64.32.0/19",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-05d531e70dd7df140"
+          }
+        ]
+      },
       {
         "name": "IsolatedSubnet",
         "type": "Isolated",
@@ -71,23 +156,5 @@
       }
     ]
   },
-  "ami:account=381354187112:filters.image-type.0=machine:filters.name.0=GitHub Enterprise Server*:filters.state.0=available:owners.0=895557238572:region=us-east-1": "ami-080dfc718384bba34",
-  "availability-zones:account=856547261104:region=us-east-1": [
-    "us-east-1a",
-    "us-east-1b",
-    "us-east-1c",
-    "us-east-1d",
-    "us-east-1e",
-    "us-east-1f"
-  ],
-  "ami:account=856547261104:filters.image-type.0=machine:filters.name.0=GitHub Enterprise Server*:filters.state.0=available:owners.0=895557238572:region=us-east-1": "ami-080dfc718384bba34",
-  "availability-zones:account=652010830346:region=us-east-1": [
-    "us-east-1a",
-    "us-east-1b",
-    "us-east-1c",
-    "us-east-1d",
-    "us-east-1e",
-    "us-east-1f"
-  ],
-  "ami:account=652010830346:filters.image-type.0=machine:filters.name.0=GitHub Enterprise Server*:filters.state.0=available:owners.0=895557238572:region=us-east-1": "ami-016d1124c76c29097"
+  "ami:account=381354187112:filters.image-type.0=machine:filters.name.0=GitHub Enterprise Server*:filters.state.0=available:owners.0=895557238572:region=us-east-1": "ami-0340c7797f77e5534"
 }

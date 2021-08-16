@@ -9,6 +9,9 @@
     "eks_cluster_instance_type": "m5.large",
     "eks_cluster_spot_instance_type": "m5.large",
     "eks_cluster_spot_price": "0.1",
-    "eks_cluster_spot_instance_min_capacity": 1
+    "eks_cluster_spot_instance_min_capacity": 1,
+    "vpc_vpn_client_cidr": "10.0.252.0/22",
+    "vpc_vpn_client_root_arn": "arn:aws:acm:us-east-1:026625820024:certificate/26b65226-7b5d-416f-a803-339f9b3504f5",
+    "vpc_vpn_server_root_arn": "arn:aws:acm:us-east-1:026625820024:certificate/6e8a908e-7c02-4606-a3aa-75764b0f864a"
   }
 }

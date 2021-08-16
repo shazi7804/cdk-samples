@@ -4,7 +4,7 @@ import { ImportResources, ImportCloudFormationStack } from '../lib/import';
 import { VpcSimpleCreate } from '../lib/vpc';
 import { TransitGatewayStack } from '../lib/transit-gateway';
 import { ApiGatewayCognitoStack } from '../lib/api-gateway';
-import { DirectoryIdentityCore } from '../lib/directory_service';
+import { DirectoryMicrosoftAdCore } from '../lib/directory_service';
 import { CodePipelineDeployEcrImageStack,
          CodePipelineStepfunctionStack,
          MultiPipelineOfApprovalStack } from '../lib/codepipeline';
@@ -38,7 +38,7 @@ new TransitGatewayStack(app, 'TransitGatewayStack', { env });
 // Applications
 new ApiGatewayCognitoStack(app, 'ApiGatewayCognitoStack', { env });
 
-new DirectoryIdentityCore(app, 'DirectoryIdentityCore', { env });
+new DirectoryMicrosoftAdCore(app, 'DirectoryMicrosoftAdCore', { env });
 
 // S3, Transfer Family
 new TransferFamilyServerCore(app, 'TransferFamilyServerCore', {
