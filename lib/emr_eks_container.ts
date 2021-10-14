@@ -44,25 +44,25 @@ export class EmrEksContainerCore extends cdk.Stack {
             podExecutionRole
         });
 
-        const emrContainersYaml = yaml.load(readFileSync("./kubernetes/manifests/emr-containers.yaml", "utf8").toString());
+        // const emrContainersYaml = yaml.load(readFileSync("./kubernetes/manifests/emr-containers.yaml", "utf8").toString());
 
         // const emrContainersManifests = new eks.KubernetesManifest(this, "emr-containers-manifests",{
         //     cluster,
         //     manifest: [emrContainersYaml],
         // });
 
-        // const virtualCluster = new emrc.CfnVirtualCluster(this, 'EmrContainerCluster', {
-        //     name: 'emr-containers',
-        //     containerProvider: {
-        //         id: "emr-containers",
-        //         type: "EKS",
-        //         info: {
-        //             eksInfo: { namespace: "emr-containers" }
-        //         }
-        //     }
-        // });
+        const virtualCluster = new emrc.CfnVirtualCluster(this, 'EmrContainerCluster', {
+            name: 'emr-containers',
+            containerProvider: {
+                id: "emr-containers",
+                type: "EKS",
+                info: {
+                    eksInfo: { namespace: "emr-containers" }
+                }
+            }
+        });
 
-        // virtualCluster.node.addDependency(cluster);
+        virtualCluster.node.addDependency(cluster);
 
     }
 }
