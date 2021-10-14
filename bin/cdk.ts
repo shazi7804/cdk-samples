@@ -10,12 +10,14 @@ import { CodePipelineDeployEcrImageStack,
          MultiPipelineOfApprovalStack } from '../lib/codepipeline';
 import { CloudFrontOrginS3Core } from '../lib/cloudfront';
 import { DataLakeCore } from '../lib/datalake';
+import { EmrEksContainerCore } from '../lib/emr_eks_container';
 import { TransferFamilyServerCore } from '../lib/transfer_family';
 import { S3ObjectLambdaUppercaseCore } from '../lib/s3_object_lambda';
 import { EksCore } from '../lib/eks';
 import { EcsFargateCore } from '../lib/ecs-fargate';
 import { VpcClienVpnStack } from '../lib/client_vpn';
 import { GithubEnterPriseServerIntegrationCodeFamily } from '../lib/github_ enterprise_codebuild_eks'
+import { BlockchainCore } from '../lib/blockchain'
 import { TerraformBackendStack } from '../lib/terraform';
 
 const app = new cdk.App();
@@ -80,9 +82,13 @@ new EcsFargateCore(app, 'EcsFargateCore', { env,
     cluster_name: app.node.tryGetContext('ecs_cluster_name'),
 })
 
+new EmrEksContainerCore(app, 'EmrEksContainerCore', { env })
+
 // CloudFront
 new CloudFrontOrginS3Core(app, 'CloudFrontOrginS3Core', { env })
 
+// Blockchain
+// new BlockchainCore(app, 'BlockchainCore', { env })
 
 // Terraform Backend
 new TerraformBackendStack(app, 'TerraformBackendStack', { env })
