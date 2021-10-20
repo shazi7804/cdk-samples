@@ -10,7 +10,7 @@ import { CodePipelineDeployEcrImageStack,
          MultiPipelineOfApprovalStack } from '../lib/codepipeline';
 import { CloudFrontOrginS3Core } from '../lib/cloudfront';
 import { DataLakeCore } from '../lib/datalake';
-import { EmrEksContainerCore } from '../lib/emr_eks_container';
+import { EmrEksContainerStack } from '../lib/emr_eks_container';
 import { TransferFamilyServerCore } from '../lib/transfer_family';
 import { S3ObjectLambdaUppercaseCore } from '../lib/s3_object_lambda';
 import { EksCore } from '../lib/eks';
@@ -82,7 +82,7 @@ new EcsFargateCore(app, 'EcsFargateCore', { env,
     cluster_name: app.node.tryGetContext('ecs_cluster_name'),
 })
 
-new EmrEksContainerCore(app, 'EmrEksContainerCore', { env })
+new EmrEksContainerStack(app, 'EmrEksContainerStack', { env })
 
 // CloudFront
 new CloudFrontOrginS3Core(app, 'CloudFrontOrginS3Core', { env })

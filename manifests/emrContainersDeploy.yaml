@@ -2,6 +2,32 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: emr-containers
+# ---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: aws-auth
+#   namespace: kube-system
+# data:
+#   mapRoles: |
+#     - rolearn: arn:aws:iam::381354187112:role/AWSFargatePodExecutionRole
+#       username: system:node:{{SessionName}}
+#       groups:
+#         - system:bootstrappers
+#         - system:nodes
+#         - system:node-proxier
+#     - rolearn: arn:aws:iam::381354187112:role/EmrEksContainerStack-AdminRole38563C57-19QMBTKS7GF9A
+#       username: arn:aws:iam::381354187112:role/EmrEksContainerStack-AdminRole38563C57-19QMBTKS7GF9A
+#       groups:
+#         - system:masters
+#    - rolearn: arn:aws:iam::381354187112:role/aws-service-role/emr-containers.amazonaws.com/AWSServiceRoleForAmazonEMRContainers
+#      username: emr-containers
+#    - rolearn: arn:aws:iam::381354187112:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_3fe26811bfe496f0/scottlwk
+#      username: arn:aws:iam::381354187112:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_3fe26811bfe496f0/scottlwk
+#      groups:
+#        - system:masters
+#   mapUsers: |
+#     []
 ---
 apiVersion: v1
 kind: ServiceAccount
