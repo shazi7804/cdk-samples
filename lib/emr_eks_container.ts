@@ -8,7 +8,11 @@ import fs = require('fs');
 import { VpcProvider } from './vpc';
 
 export interface EmrEksContainerStackProps extends cdk.StackProps {
-
+    readonly addon_vpc_cni_version: string;
+    readonly addon_kube_proxy_version: string;
+    readonly addon_core_dns_version: string;
+    readonly virtual_cluster_name: string;
+    readonly namespace: string;
 }
 
 export class EmrEksContainerStack extends cdk.Stack {
@@ -30,14 +34,12 @@ export class EmrEksContainerStack extends cdk.Stack {
             defaultCapacity: 0,
             version: eks.KubernetesVersion.V1_21,
             endpointAccess: eks.EndpointAccess.PUBLIC_AND_PRIVATE,
-            
-            
         });
         cluster.addFargateProfile('fargate-profile', {
             selectors: [
                 { namespace: "kube-system"},
                 { namespace: "default"},
-                { namespace: "emr-containers"}
+                { namespace: props.namespace}
             ],
             subnetSelection: { subnetType: ec2.SubnetType.PRIVATE_WITH_NAT },
             vpc,
@@ -116,20 +118,20 @@ export class EmrEksContainerStack extends cdk.Stack {
             addonName: 'vpc-cni',
             resolveConflicts: 'OVERWRITE',
             clusterName: cluster.clusterName,
-            addonVersion: 'v1.9.1-eksbuild.1',
+            addonVersion: props.addon_vpc_cni_version,
             serviceAccountRoleArn: awsNodeRole.roleArn
         });
         new eks.CfnAddon(this, 'kube-proxy', {
             addonName: 'kube-proxy',
             resolveConflicts: 'OVERWRITE',
             clusterName: cluster.clusterName,
-            addonVersion: 'v1.21.2-eksbuild.2',
+            addonVersion: props.addon_kube_proxy_version,
         });
         new eks.CfnAddon(this, 'core-dns', {
             addonName: 'coredns',
             resolveConflicts: 'OVERWRITE',
             clusterName: cluster.clusterName,
-            addonVersion: 'v1.8.4-eksbuild.1',
+            addonVersion: props.addon_core_dns_version,
         });
 
         // Manifests
@@ -164,12 +166,12 @@ export class EmrEksContainerStack extends cdk.Stack {
         });
 
         const virtualCluster = new emrc.CfnVirtualCluster(this, 'EmrContainerCluster', {
-            name: 'emr-containers',
+            name: props.virtual_cluster_name,
             containerProvider: {
                 id: cluster.clusterName,
                 type: "EKS",
                 info: {
-                    eksInfo: { namespace: "emr-containers" }
+                    eksInfo: { namespace: props.namespace }
                 }
             }
         });

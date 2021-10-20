@@ -69,20 +69,31 @@ new CodePipelineStepfunctionStack(app, 'CodePipelineStepfunctionStack', { env })
 new MultiPipelineOfApprovalStack(app, 'MultiPipelineOfApprovalStack', { env });
 
 
-// Container
-new EksCore(app, 'EksCore', { env,
+// Containers
+new EksCore(app, 'EksCore', {
+    env,
     cluster_version: app.node.tryGetContext('eks_cluster_version'),
     cluster_instance_type: app.node.tryGetContext('eks_cluster_instance_type'),
     cluster_spot_instance_type: app.node.tryGetContext('eks_cluster_spot_instance_type'),
     cluster_spot_price: app.node.tryGetContext('eks_cluster_spot_price'),
-    cluster_spot_instance_min_capacity: app.node.tryGetContext('cluster_spot_instance_min_capacity'),
-})
+    cluster_spot_instance_min_capacity: app.node.tryGetContext('eks_cluster_spot_instance_min_capacity'),
+    addon_vpc_cni_version: app.node.tryGetContext('eks_addon_vpc_cni_version'),
+    addon_kube_proxy_version: app.node.tryGetContext('eks_addon_kube_proxy_version'),
+    addon_core_dns_version: app.node.tryGetContext('eks_addon_core_dns_version'),
+});
 
 new EcsFargateCore(app, 'EcsFargateCore', { env,
     cluster_name: app.node.tryGetContext('ecs_cluster_name'),
-})
+});
 
-new EmrEksContainerStack(app, 'EmrEksContainerStack', { env })
+new EmrEksContainerStack(app, 'EmrEksContainerStack', {
+    env,
+    addon_vpc_cni_version: app.node.tryGetContext('eks_addon_vpc_cni_version'),
+    addon_kube_proxy_version: app.node.tryGetContext('eks_addon_kube_proxy_version'),
+    addon_core_dns_version: app.node.tryGetContext('eks_addon_core_dns_version'),
+    namespace: app.node.tryGetContext('emr_containers_namespace'),
+    virtual_cluster_name: app.node.tryGetContext('emr_virtual_cluster_name'),
+});
 
 // CloudFront
 new CloudFrontOrginS3Core(app, 'CloudFrontOrginS3Core', { env })

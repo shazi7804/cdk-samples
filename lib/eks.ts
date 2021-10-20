@@ -11,6 +11,9 @@ export interface EksCoreProps extends cdk.StackProps {
     readonly cluster_spot_instance_type: string;
     readonly cluster_spot_price: string;
     readonly cluster_spot_instance_min_capacity: number;
+    readonly addon_vpc_cni_version: string;
+    readonly addon_kube_proxy_version: string;
+    readonly addon_core_dns_version: string;
 }
 
 export class EksCore extends cdk.Stack {
@@ -23,7 +26,7 @@ export class EksCore extends cdk.Stack {
             assumedBy: new iam.AccountRootPrincipal()
         });
         
-        const eksCluster = new eks.Cluster(this, 'Cluster', {
+        const cluster = new eks.Cluster(this, 'Cluster', {
             vpc,
             vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE }],
             defaultCapacity: 1,
@@ -32,18 +35,57 @@ export class EksCore extends cdk.Stack {
             endpointAccess: eks.EndpointAccess.PRIVATE // No access outside of your VPC.
         });
 
-        eksCluster.addAutoScalingGroupCapacity('SpotWorker', {
+        cluster.addAutoScalingGroupCapacity('SpotWorker', {
             vpcSubnets: { subnets: vpc.isolatedSubnets },
             instanceType: new ec2.InstanceType(props.cluster_spot_instance_type),
             maxInstanceLifetime: cdk.Duration.days(7),
             spotPrice: props.cluster_spot_price,
             minCapacity: props.cluster_spot_instance_min_capacity,
         })
-        eksCluster.addAutoScalingGroupCapacity('DemandWorker', {
+        cluster.addAutoScalingGroupCapacity('DemandWorker', {
             instanceType: new ec2.InstanceType(props.cluster_instance_type),
             maxInstanceLifetime: cdk.Duration.days(7),
             minCapacity: props.cluster_spot_instance_min_capacity,
         })
+
+        // Patch aws-node daemonset to use IRSA via EKS Addons, do before nodes are created
+        // https://aws.github.io/aws-eks-best-practices/security/docs/iam/#update-the-aws-node-daemonset-to-use-irsa
+        const awsNodeTrustPolicy = new cdk.CfnJson(this, 'aws-node-trust-policy', {
+            value: {
+              [`${cluster.openIdConnectProvider.openIdConnectProviderIssuer}:aud`]: 'sts.amazonaws.com',
+              [`${cluster.openIdConnectProvider.openIdConnectProviderIssuer}:sub`]: 'system:serviceaccount:kube-system:aws-node',
+            },
+        });
+        const awsNodePrincipal = new iam.OpenIdConnectPrincipal(cluster.openIdConnectProvider).withConditions({
+            StringEquals: awsNodeTrustPolicy,
+        });
+        const awsNodeRole = new iam.Role(this, 'aws-node-role', {
+            assumedBy: awsNodePrincipal
+        })
+
+        awsNodeRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEKS_CNI_Policy'))
+
+        // Addons
+        new eks.CfnAddon(this, 'vpc-cni', {
+            addonName: 'vpc-cni',
+            resolveConflicts: 'OVERWRITE',
+            clusterName: cluster.clusterName,
+            addonVersion: props.addon_vpc_cni_version,
+            serviceAccountRoleArn: awsNodeRole.roleArn
+        });
+        new eks.CfnAddon(this, 'kube-proxy', {
+            addonName: 'kube-proxy',
+            resolveConflicts: 'OVERWRITE',
+            clusterName: cluster.clusterName,
+            addonVersion: props.addon_kube_proxy_version,
+        });
+        new eks.CfnAddon(this, 'core-dns', {
+            addonName: 'coredns',
+            resolveConflicts: 'OVERWRITE',
+            clusterName: cluster.clusterName,
+            addonVersion: props.addon_core_dns_version,
+        });
+
 
         new cdk.CfnOutput(this, 'Region', { value: Stack.of(this).region })
         new cdk.CfnOutput(this, 'ClusterVersion', { value: props.cluster_version })
