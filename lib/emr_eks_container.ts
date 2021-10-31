@@ -182,4 +182,3 @@ export class EmrEksContainerStack extends cdk.Stack {
 
     }
 }
-
