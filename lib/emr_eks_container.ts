@@ -89,7 +89,7 @@ export class EmrEksContainerStack extends cdk.Stack {
         );
 
         const jobExecutionRole = new iam.Role(this, 'execution-role', {
-            roleName: 'AmazonEMRContainersJobExecutionRoleByCDK',
+            roleName: 'AmazonEMRContainersJobExecutionRole',
             assumedBy: jobExecutionPrincipal
         });
 
@@ -109,7 +109,7 @@ export class EmrEksContainerStack extends cdk.Stack {
             new iam.PolicyStatement({
                     effect: iam.Effect.ALLOW,
                     principals: [jobDriverPrincipal],
-                    actions: ['sts:AssumeRole']
+                    actions: ['sts:AssumeRoleWithWebIdentity']
             }),
         )
 
@@ -162,7 +162,7 @@ export class EmrEksContainerStack extends cdk.Stack {
         });
         awsAuth.addRoleMapping(emrContainerServiceRole, {
             username: 'emr-containers',
-            groups: ['']
+            groups: []
         });
 
         const virtualCluster = new emrc.CfnVirtualCluster(this, 'EmrContainerCluster', {
