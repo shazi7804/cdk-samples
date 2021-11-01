@@ -101,7 +101,7 @@ export class EmrEksContainerStack extends cdk.Stack {
             value: {[`${cluster.openIdConnectProvider.openIdConnectProviderIssuer}:sub`]: 'system:serviceaccount:emr-containers:emr-containers-sa-*-*-' + this.account + '-*'},
         });
         const jobDriverPrincipal = new iam.OpenIdConnectPrincipal(cluster.openIdConnectProvider).withConditions({
-            StringEquals: jobDriverTrustPolicy,
+            StringLike: jobDriverTrustPolicy,
         });
 
         // Updated trust policy of job driver conntainer to use IRSA 
