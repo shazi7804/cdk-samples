@@ -25,6 +25,7 @@
     "@aws-cdk/aws-apigateway": "1.128.0",
     "@aws-cdk/aws-athena": "1.128.0",
     "@aws-cdk/aws-autoscaling": "1.128.0",
+    "@aws-cdk/aws-cloudtrail": "1.128.0",
     "@aws-cdk/aws-codebuild": "1.128.0",
     "@aws-cdk/aws-codecommit": "1.128.0",
     "@aws-cdk/aws-codepipeline": "1.128.0",
@@ -52,8 +53,10 @@
     "@aws-cdk/core": "1.128.0",
     "@types/js-yaml": "^4.0.1",
     "@types/node": "10.17.27",
+    "base36": "^1.0.0",
     "hasha": "^5.2.2",
     "js-yaml": "^4.0.1",
+    "simple-base": "^1.0.0",
     "typescript": "~3.9.7"
   }
 }

@@ -142,10 +142,6 @@ export class EmrEksContainerStack extends cdk.Stack {
           prune: false
         });
 
-        // IAM integrate EMR
-        const emrContainerServiceRole = iam.Role.fromRoleArn(this, 'ServiceRoleForAmazonEMRContainers',
-            "arn:aws:iam::" + this.account + ":role/AWSServiceRoleForAmazonEMRContainers"
-        );
 
         const awsAuth = new eks.AwsAuth(this, 'aws-auth', {cluster})
         awsAuth.addRoleMapping(mastersRole, {
@@ -160,10 +156,27 @@ export class EmrEksContainerStack extends cdk.Stack {
                 'system:node-proxier'
             ]
         });
+
+        // Amazon EMR service role
+        const emrContainerServiceRole = iam.Role.fromRoleArn(this, 'ServiceRoleForAmazonEMRContainers',
+            "arn:aws:iam::" + this.account + ":role/AWSServiceRoleForAmazonEMRContainers"
+        );
         awsAuth.addRoleMapping(emrContainerServiceRole, {
             username: 'emr-containers',
             groups: []
         });
+
+        // // Worker node role (Optional)
+        // const workerNodeRole = iam.Role.fromRoleArn(this, 'AmazonEKSNodeGroupRole',
+        //     "arn:aws:iam::" + this.account + ":role/AmazonEKSNodeGroupRole"
+        // );
+        // awsAuth.addRoleMapping(workerNodeRole, {
+        //     username: 'system:node:{{EC2PrivateDNSName}}',
+        //     groups: [
+        //         'system:bootstrappers',
+        //         'system:nodes'
+        //     ]
+        // });
 
         const virtualCluster = new emrc.CfnVirtualCluster(this, 'EmrContainerCluster', {
             name: props.virtual_cluster_name,

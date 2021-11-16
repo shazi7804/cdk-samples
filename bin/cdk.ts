@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import * as cdk from '@aws-cdk/core';
 import { ImportResources, ImportCloudFormationStack } from '../lib/import';
+import { EnableAwsGuarddutyStackSetStack } from '../lib/cloudformation'
 import { VpcSimpleCreate } from '../lib/vpc';
+import { CloudTrailStack } from '../lib/cloudtrail';
 import { TransitGatewayStack } from '../lib/transit-gateway';
 import { ApiGatewayCognitoStack } from '../lib/api-gateway';
 import { DirectoryMicrosoftAdCore } from '../lib/directory_service';
@@ -23,9 +25,13 @@ import { TerraformBackendStack } from '../lib/terraform';
 const app = new cdk.App();
 
 const env = {
-    region: app.node.tryGetContext('region') || process.env.CDK_INTEG_REGION || process.env.CDK_DEFAULT_REGION,
-    account: app.node.tryGetContext('account') || process.env.CDK_INTEG_ACCOUNT || process.env.CDK_DEFAULT_ACCOUNT
+    region: app.node.tryGetContext('region'),
+    account: app.node.tryGetContext('account')
 };
+
+new EnableAwsGuarddutyStackSetStack(app, 'EnableAwsGuarddutyStackSetStack', { env })
+
+new CloudTrailStack(app, 'CloudTrailStack', { env })
 
 // Network stack
 new VpcSimpleCreate(app, 'vpcSample', { env });
@@ -37,19 +43,17 @@ new VpcClienVpnStack(app, 'VpcClienVpnStack', {
 })
 new TransitGatewayStack(app, 'TransitGatewayStack', { env });
 
+
+
 // Applications
 new ApiGatewayCognitoStack(app, 'ApiGatewayCognitoStack', { env });
 
 new DirectoryMicrosoftAdCore(app, 'DirectoryMicrosoftAdCore', { env });
 
 // S3, Transfer Family
-new TransferFamilyServerCore(app, 'TransferFamilyServerCore', {
-    env
-});
+new TransferFamilyServerCore(app, 'TransferFamilyServerCore', { env });
 
-new S3ObjectLambdaUppercaseCore(app, 'S3ObjectLambdaUppercaseCore', {
-    env
-});
+new S3ObjectLambdaUppercaseCore(app, 'S3ObjectLambdaUppercaseCore', { env });
 
 
 // new DataLakeCore(app, 'DataLakeCore', {
