@@ -12,11 +12,13 @@ import { CodePipelineDeployEcrImageStack,
          MultiPipelineOfApprovalStack } from '../lib/codepipeline';
 import { CloudFrontOrginS3Core } from '../lib/cloudfront';
 import { DataLakeCore } from '../lib/datalake';
-import { EmrEksContainerStack } from '../lib/emr_eks_container';
 import { TransferFamilyServerCore } from '../lib/transfer_family';
 import { S3ObjectLambdaUppercaseCore } from '../lib/s3_object_lambda';
-import { EksCore } from '../lib/eks';
-import { EcsFargateCore } from '../lib/ecs-fargate';
+import { EksWithWorkerNodeStack,
+         EksWithFargateStack,
+         EksEmrContainerStack } from '../lib/eks';
+import { EcsFargateCore,
+         EcsScalingBySqsStack } from '../lib/ecs';
 import { VpcClienVpnStack } from '../lib/client_vpn';
 import { GithubEnterPriseServerIntegrationCodeFamily } from '../lib/github_ enterprise_codebuild_eks'
 import { BlockchainCore } from '../lib/blockchain'
@@ -74,7 +76,7 @@ new MultiPipelineOfApprovalStack(app, 'MultiPipelineOfApprovalStack', { env });
 
 
 // Containers
-new EksCore(app, 'EksCore', {
+new EksWithWorkerNodeStack(app, 'EksWithWorkerNodeStack', {
     env,
     cluster_version: app.node.tryGetContext('eks_cluster_version'),
     cluster_instance_type: app.node.tryGetContext('eks_cluster_instance_type'),
@@ -86,11 +88,14 @@ new EksCore(app, 'EksCore', {
     addon_core_dns_version: app.node.tryGetContext('eks_addon_core_dns_version'),
 });
 
-new EcsFargateCore(app, 'EcsFargateCore', { env,
-    cluster_name: app.node.tryGetContext('ecs_cluster_name'),
+new EksWithFargateStack(app, 'EksWithFargateStack', {
+    env,
+    addon_vpc_cni_version: app.node.tryGetContext('eks_addon_vpc_cni_version'),
+    addon_kube_proxy_version: app.node.tryGetContext('eks_addon_kube_proxy_version'),
+    addon_core_dns_version: app.node.tryGetContext('eks_addon_core_dns_version'),
 });
 
-new EmrEksContainerStack(app, 'EmrEksContainerStack', {
+new EksEmrContainerStack(app, 'EksEmrContainerStack', {
     env,
     addon_vpc_cni_version: app.node.tryGetContext('eks_addon_vpc_cni_version'),
     addon_kube_proxy_version: app.node.tryGetContext('eks_addon_kube_proxy_version'),
@@ -99,7 +104,15 @@ new EmrEksContainerStack(app, 'EmrEksContainerStack', {
     virtual_cluster_name: app.node.tryGetContext('emr_virtual_cluster_name'),
 });
 
-// CloudFront
+// Amazon ECS
+new EcsFargateCore(app, 'EcsFargateCore', { env,
+    cluster_name: app.node.tryGetContext('ecs_cluster_name'),
+});
+
+new EcsScalingBySqsStack(app, 'EcsScalingBySqsStack', { env });
+
+
+// AWS CloudFront
 new CloudFrontOrginS3Core(app, 'CloudFrontOrginS3Core', { env })
 
 // Blockchain

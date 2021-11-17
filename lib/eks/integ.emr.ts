@@ -5,9 +5,9 @@ import emrc = require('@aws-cdk/aws-emrcontainers');
 import iam = require('@aws-cdk/aws-iam');
 import yaml = require('js-yaml');
 import fs = require('fs');
-import { VpcProvider } from './vpc';
+import { VpcProvider } from '../vpc';
 
-export interface EmrEksContainerStackProps extends cdk.StackProps {
+export interface EksEmrContainerStackProps extends cdk.StackProps {
     readonly addon_vpc_cni_version: string;
     readonly addon_kube_proxy_version: string;
     readonly addon_core_dns_version: string;
@@ -15,8 +15,8 @@ export interface EmrEksContainerStackProps extends cdk.StackProps {
     readonly namespace: string;
 }
 
-export class EmrEksContainerStack extends cdk.Stack {
-    constructor(scope: cdk.Construct, id: string, props: EmrEksContainerStackProps) {
+export class EksEmrContainerStack extends cdk.Stack {
+    constructor(scope: cdk.Construct, id: string, props: EksEmrContainerStackProps) {
         super(scope, id, props);
 
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }) || VpcProvider.createSimple(this);
@@ -24,6 +24,7 @@ export class EmrEksContainerStack extends cdk.Stack {
         const mastersRole = new iam.Role(this, 'AdminRole', {
             assumedBy: new iam.AccountRootPrincipal()
         });
+        
         const podExecutionRole = iam.Role.fromRoleArn(this, 'pod-execution-role', "arn:aws:iam::" + this.account + ":role/AWSFargatePodExecutionRole")
 
         const cluster = new eks.Cluster(this, 'EksCluster', {

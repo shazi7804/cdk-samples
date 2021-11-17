@@ -2,10 +2,10 @@ import cdk = require('@aws-cdk/core');
 import eks = require('@aws-cdk/aws-eks');
 import ec2 = require('@aws-cdk/aws-ec2');
 import iam = require('@aws-cdk/aws-iam');
-import { VpcProvider } from './vpc';
+import { VpcProvider } from '../vpc';
 import { Stack } from '@aws-cdk/core';
 
-export interface EksCoreProps extends cdk.StackProps {
+export interface EksWithWorkerNodeStackProps extends cdk.StackProps {
     readonly cluster_version: string;
     readonly cluster_instance_type: string;
     readonly cluster_spot_instance_type: string;
@@ -16,8 +16,8 @@ export interface EksCoreProps extends cdk.StackProps {
     readonly addon_core_dns_version: string;
 }
 
-export class EksCore extends cdk.Stack {
-    constructor(scope: cdk.Construct, id: string, props: EksCoreProps) {
+export class EksWithWorkerNodeStack extends cdk.Stack {
+    constructor(scope: cdk.Construct, id: string, props: EksWithWorkerNodeStackProps) {
         super(scope, id, props);
 
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }) || VpcProvider.createSimple(this); 
@@ -85,7 +85,6 @@ export class EksCore extends cdk.Stack {
             clusterName: cluster.clusterName,
             addonVersion: props.addon_core_dns_version,
         });
-
 
         new cdk.CfnOutput(this, 'Region', { value: Stack.of(this).region })
         new cdk.CfnOutput(this, 'ClusterVersion', { value: props.cluster_version })

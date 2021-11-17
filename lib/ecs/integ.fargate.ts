@@ -3,7 +3,7 @@ import ec2 = require('@aws-cdk/aws-ec2');
 import ecs = require('@aws-cdk/aws-ecs');
 import elb = require('@aws-cdk/aws-elasticloadbalancingv2');
 import iam = require('@aws-cdk/aws-iam');
-import { VpcProvider } from './vpc';
+import { VpcProvider } from '../vpc';
 
 export interface EcsFargateProps extends cdk.StackProps {
     readonly cluster_name: string;
@@ -33,9 +33,6 @@ export class EcsFargateCore extends cdk.Stack {
         //     port: 80,
         //     protocol: elb.ApplicationProtocol.HTTP,
         // })
-        
-
-
 
     }
 }
