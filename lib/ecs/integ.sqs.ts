@@ -1,8 +1,10 @@
 import * as cdk from "@aws-cdk/core";
 import * as ec2 from "@aws-cdk/aws-ec2";
+import * as ecr from "@aws-cdk/aws-ecr";
 import * as ecs from "@aws-cdk/aws-ecs";
 import * as sqs from "@aws-cdk/aws-sqs";
 import * as iam from "@aws-cdk/aws-iam";
+import * as logs from "@aws-cdk/aws-logs";
 import * as asg from "@aws-cdk/aws-autoscaling";
 import * as apigw from "@aws-cdk/aws-apigateway";
 import { VpcProvider } from '../vpc';
@@ -31,10 +33,27 @@ export class EcsScalingBySqsStack extends cdk.Stack {
             new iam.Policy(this, "sqs-full-access", {
                 statements: [
                     new iam.PolicyStatement({
-                    actions: ["sqs:*"],
-                    effect: iam.Effect.ALLOW,
-                    resources: [ messageQueue.queueArn ],
-                    }),
+                        actions: ["sqs:*"],
+                        effect: iam.Effect.ALLOW,
+                        resources: [ messageQueue.queueArn ],
+                    })
+                ],
+            })
+        );
+
+        taskRole.attachInlinePolicy(
+            new iam.Policy(this, "send-cw-logs", {
+                statements: [
+                    new iam.PolicyStatement({
+                        actions: [
+                            "logs:CreateLogGroup",
+                            "logs:CreateLogStream",
+                            "logs:PutLogEvents",
+                            "logs:DescribeLogStreams"
+                        ],
+                        effect: iam.Effect.ALLOW,
+                        resources: [ "arn:aws:logs:*:*:*" ],
+                    })
                 ],
             })
         );
@@ -56,7 +75,9 @@ export class EcsScalingBySqsStack extends cdk.Stack {
         );
 
         // API Gateway
+        // https://${APIGW_ID}.execute-api.us-east-1.amazonaws.com/run/queue?message=test
         const api = new apigw.RestApi(this, "api-gateway", {
+            restApiName: 'send-message-queue-with-ecs-scaling',
             deployOptions: {
                 stageName: "run",
                 tracingEnabled: true,
@@ -96,18 +117,25 @@ export class EcsScalingBySqsStack extends cdk.Stack {
         // ecs
         const cluster = new ecs.Cluster(this, 'EcsCluster', { vpc });
 
-        const logging = new ecs.AwsLogDriver({
-            streamPrefix: "/aws/ecs/scalingBySqs",
-        });
-
         const taskDefinition = new ecs.FargateTaskDefinition(this, "task-definition", {
               memoryLimitMiB: 4096,
               cpu: 2048,
               taskRole
         });
 
-        const container = taskDefinition.addContainer('python-read-message-queue', {
-            image: ecs.ContainerImage.fromRegistry("python-read-message-queue:latest"),
+        const logging = new ecs.AwsLogDriver({
+            streamPrefix: "task-",
+            logGroup: new logs.LogGroup(this, "LogGroup", {
+                logGroupName: "/aws/ecs/scalingBySqs",
+                retention: logs.RetentionDays.ONE_MONTH
+            })
+        });
+
+        // Container image from https://github.com/shazi7804/container-samples/
+        const repository = ecr.Repository.fromRepositoryName(this, 'repo', 'python-message-queue-consumer');
+
+        const container = taskDefinition.addContainer('python-message-queue-consumer', {
+            image: ecs.ContainerImage.fromEcrRepository(repository, 'latest'),
             memoryLimitMiB: 256,
             cpu: 256,
             logging
@@ -121,16 +149,29 @@ export class EcsScalingBySqsStack extends cdk.Stack {
 
         const serviceScaling = service.autoScaleTaskCount({
             minCapacity: 0,
-            maxCapacity: 10,
+            maxCapacity: 50,
         });
 
-        serviceScaling.scaleOnMetric("scaling-by-queue-metric", {
+        serviceScaling.scaleOnMetric("scaling-initial-by-queue-metric", {
             metric: messageQueue.metricApproximateNumberOfMessagesVisible(),
             adjustmentType: asg.AdjustmentType.CHANGE_IN_CAPACITY,
-            cooldown: cdk.Duration.seconds(300),
+            evaluationPeriods: 1,
+            cooldown: cdk.Duration.seconds(60),
             scalingSteps: [
-              { upper: 0, change: -1 },
-              { lower: 1, change: +1 },
+                { upper: 0, change: -1 },
+                { lower: 1, change: +1 },
+                { lower: 5, change: +3 },
+                { lower: 10, change: +5 },
+            ],
+        });
+
+        serviceScaling.scaleOnMetric("scaling-high-by-queue-metric", {
+            metric: messageQueue.metricApproximateNumberOfMessagesVisible(),
+            adjustmentType: asg.AdjustmentType.PERCENT_CHANGE_IN_CAPACITY,
+            cooldown: cdk.Duration.seconds(60),
+            scalingSteps: [
+                { upper: 10, change: -10 },
+                { lower: 15, change: +67 },
             ],
         });
 
