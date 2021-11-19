@@ -1,1 +1,1 @@
-export * from './apigateway-cognito';
+export * from './integ.cognito';

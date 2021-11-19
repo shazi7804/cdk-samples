@@ -124,7 +124,7 @@ export class EcsScalingBySqsStack extends cdk.Stack {
         });
 
         const logging = new ecs.AwsLogDriver({
-            streamPrefix: "task-",
+            streamPrefix: "task",
             logGroup: new logs.LogGroup(this, "LogGroup", {
                 logGroupName: "/aws/ecs/scalingBySqs",
                 retention: logs.RetentionDays.ONE_MONTH

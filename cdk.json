@@ -18,7 +18,7 @@
     "emr_containers_namespace": "emr-containers",
     "emr_virtual_cluster_name": "emr-containers",
     "vpc_vpn_client_cidr": "10.0.252.0/22",
-    "vpc_vpn_client_root_arn": "arn:aws:acm:us-east-1:026625820024:certificate/26b65226-7b5d-416f-a803-339f9b3504f5",
-    "vpc_vpn_server_root_arn": "arn:aws:acm:us-east-1:026625820024:certificate/6e8a908e-7c02-4606-a3aa-75764b0f864a"
+    "vpc_vpn_client_root_arn": "arn:aws:acm:us-east-1:381354187112:certificate/7b9d0020-a76f-43d9-bac3-bcd8b1bb241f",
+    "vpc_vpn_server_root_arn": "arn:aws:acm:us-east-1:381354187112:certificate/69dfe5c4-7984-422f-8565-960f35a692d7"
   }
 }

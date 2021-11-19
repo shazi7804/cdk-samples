@@ -1,7 +1,7 @@
 import cdk = require('@aws-cdk/core');
 import ec2 = require('@aws-cdk/aws-ec2');
 import logs = require('@aws-cdk/aws-logs');
-import { VpcProvider } from './vpc';
+import { VpcProvider } from '../vpc';
 
 
 export interface VpcClienVpnStackProps extends cdk.StackProps {

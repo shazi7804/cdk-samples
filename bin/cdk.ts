@@ -2,9 +2,7 @@
 import * as cdk from '@aws-cdk/core';
 import { ImportResources, ImportCloudFormationStack } from '../lib/import';
 import { EnableAwsGuarddutyStackSetStack } from '../lib/cloudformation'
-import { VpcSimpleCreate } from '../lib/vpc';
 import { CloudTrailStack } from '../lib/cloudtrail';
-import { TransitGatewayStack } from '../lib/transit-gateway';
 import { ApiGatewayCognitoStack } from '../lib/api-gateway';
 import { DirectoryMicrosoftAdCore } from '../lib/directory_service';
 import { CodePipelineDeployEcrImageStack,
@@ -19,7 +17,9 @@ import { EksWithWorkerNodeStack,
          EksEmrContainerStack } from '../lib/eks';
 import { EcsFargateCore,
          EcsScalingBySqsStack } from '../lib/ecs';
-import { VpcClienVpnStack } from '../lib/client_vpn';
+import { VpcSimpleCreate,
+         VpcClienVpnStack,
+         TransitGatewayStack } from '../lib/vpc';
 import { GithubEnterPriseServerIntegrationCodeFamily } from '../lib/github_ enterprise_codebuild_eks'
 import { BlockchainCore } from '../lib/blockchain'
 import { TerraformBackendStack } from '../lib/terraform';

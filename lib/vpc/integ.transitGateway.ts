@@ -1,6 +1,6 @@
 import cdk = require('@aws-cdk/core');
 import ec2 = require('@aws-cdk/aws-ec2');
-import { VpcProvider } from './vpc';
+import { VpcProvider } from '../vpc';
 
 
 // 
