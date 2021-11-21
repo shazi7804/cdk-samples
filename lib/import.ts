@@ -17,7 +17,7 @@ export class ImportCloudFormationStack extends cdk.Stack {
         super(scope, id, props);
 
         const cfnTemplate = new cfn_inc.CfnInclude(this, 'ExistCFN', { 
-            templateFile: 'include/cloudformation.yaml',
+            templateFile: 'samples/cloudformation/bucket.yaml',
         });
 
         const cfnBucket = cfnTemplate.getResource('ExistBucket') as s3.CfnBucket;

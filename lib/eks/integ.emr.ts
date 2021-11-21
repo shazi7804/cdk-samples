@@ -136,7 +136,7 @@ export class EksEmrContainerStack extends cdk.Stack {
         });
 
         // Manifests
-        const manifestEmrContainers = yaml.loadAll(fs.readFileSync('manifests/emrContainersDeploy.yaml', 'utf-8')) as Record<string, any>[];
+        const manifestEmrContainers = yaml.loadAll(fs.readFileSync('samples/kubernetes/manifests/emrContainersDeploy.yaml', 'utf-8')) as Record<string, any>[];
         const manifestEmrContainersDeploy = new eks.KubernetesManifest(this, 'emr-containers-deploy', {
           cluster,
           manifest: manifestEmrContainers,
