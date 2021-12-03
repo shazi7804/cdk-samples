@@ -118,9 +118,9 @@ export class EcsScalingBySqsStack extends cdk.Stack {
         const cluster = new ecs.Cluster(this, 'EcsCluster', { vpc });
 
         const taskDefinition = new ecs.FargateTaskDefinition(this, "task-definition", {
-              memoryLimitMiB: 4096,
-              cpu: 2048,
-              taskRole
+                memoryLimitMiB: 4096,
+                cpu: 2048,
+                taskRole
         });
 
         const logging = new ecs.AwsLogDriver({

@@ -5,16 +5,17 @@ import { EnableAwsGuarddutyStackSetStack } from '../lib/cloudformation'
 import { CloudTrailStack } from '../lib/cloudtrail';
 import { ApiGatewayCognitoStack } from '../lib/api-gateway';
 import { DirectoryMicrosoftAdCore } from '../lib/directory_service';
-import { CodePipelineDeployEcrImageStack,
-         CodePipelineStepfunctionStack,
+import { CodePipelineStepfunctionStack,
          MultiPipelineOfApprovalStack } from '../lib/codepipeline';
 import { CloudFrontOrginS3Core } from '../lib/cloudfront';
 import { DataLakeCore } from '../lib/datalake';
 import { TransferFamilyServerCore } from '../lib/transfer_family';
+import { KinesisFirehoseDestinationOpenSearchStack } from '../lib/kinesis';
 import { S3ObjectLambdaUppercaseCore } from '../lib/s3_object_lambda';
 import { EksWithWorkerNodeStack,
          EksWithFargateStack,
-         EksEmrContainerStack } from '../lib/eks';
+         EksEmrContainerStack,
+         EksIntegCodePipelineDeployStack } from '../lib/eks';
 import { EcsFargateCore,
          EcsScalingBySqsStack } from '../lib/ecs';
 import { VpcSimpleCreate,
@@ -45,8 +46,6 @@ new VpcClienVpnStack(app, 'VpcClienVpnStack', {
 })
 new TransitGatewayStack(app, 'TransitGatewayStack', { env });
 
-
-
 // Applications
 new ApiGatewayCognitoStack(app, 'ApiGatewayCognitoStack', { env });
 
@@ -57,12 +56,14 @@ new TransferFamilyServerCore(app, 'TransferFamilyServerCore', { env });
 
 new S3ObjectLambdaUppercaseCore(app, 'S3ObjectLambdaUppercaseCore', { env });
 
-
 // new DataLakeCore(app, 'DataLakeCore', {
 //     env,
 //     datalake_lakeformation_admin_arn: app.node.tryGetContext('datalake_lakeformation_admin_arn'),
 //     datalake_starter_bucket_name: app.node.tryGetContext('datalake_starter_bucket_name')
 // })
+
+// Kinesis
+new KinesisFirehoseDestinationOpenSearchStack(app, 'KinesisFirehoseDestinationOpenSearchStack', { env })
 
 new GithubEnterPriseServerIntegrationCodeFamily(app, 'GithubEnterPriseServerIntegrationCodeFamily', { env,
     myip: app.node.tryGetContext('myip'),
@@ -70,10 +71,8 @@ new GithubEnterPriseServerIntegrationCodeFamily(app, 'GithubEnterPriseServerInte
 })
 
 // CodePipeline
-new CodePipelineDeployEcrImageStack(app, 'CodePipelineDeployEcrImageStack', { env });
 new CodePipelineStepfunctionStack(app, 'CodePipelineStepfunctionStack', { env });
 new MultiPipelineOfApprovalStack(app, 'MultiPipelineOfApprovalStack', { env });
-
 
 // Containers
 new EksWithWorkerNodeStack(app, 'EksWithWorkerNodeStack', {
@@ -103,6 +102,8 @@ new EksEmrContainerStack(app, 'EksEmrContainerStack', {
     namespace: app.node.tryGetContext('emr_containers_namespace'),
     virtual_cluster_name: app.node.tryGetContext('emr_virtual_cluster_name'),
 });
+
+new EksIntegCodePipelineDeployStack(app, 'EksIntegCodePipelineDeployStack', { env });
 
 // Amazon ECS
 new EcsFargateCore(app, 'EcsFargateCore', { env,

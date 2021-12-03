@@ -8,10 +8,11 @@ import ecr = require("@aws-cdk/aws-ecr");
 import sns = require("@aws-cdk/aws-sns");
 import sns_subscriptions = require("@aws-cdk/aws-sns-subscriptions");
 import targets = require("@aws-cdk/aws-events-targets");
+import yaml = require('js-yaml');
+import fs = require('fs');
 
-export interface CodePipelineDeployEcrImageStackProps extends cdk.StackProps {
+export interface EksIntegCodePipelineDeployStackProps extends cdk.StackProps {
   readonly name?: string;
-  readonly ecr_repo?: string;
   readonly codecommit_repo?: string;
   readonly codecommit_branch?: string;
   readonly codebuild_project?: string;
@@ -19,12 +20,11 @@ export interface CodePipelineDeployEcrImageStackProps extends cdk.StackProps {
   readonly notifications_email?: string;
 }
 
-export class CodePipelineDeployEcrImageStack extends cdk.Stack {
-  constructor(scope: cdk.App, id: string, props: CodePipelineDeployEcrImageStackProps) {
+export class EksIntegCodePipelineDeployStack extends cdk.Stack {
+  constructor(scope: cdk.App, id: string, props: EksIntegCodePipelineDeployStackProps) {
     super(scope, id, props);
 
-    const name = props.name ?? "ecr-image-sample"
-
+    const name = 'game-2048'
 // -------------------------------------------------------------
 // ### buildspec.yml
 // version: 0.2
@@ -65,66 +65,60 @@ export class CodePipelineDeployEcrImageStack extends cdk.Stack {
 //     app.run(host='0.0.0.0', port=80, threaded=True)
 // -------------------------------------------------------------
 
-    const ecrRepository = new ecr.Repository(this, "EcrImageRepo", {
-      repositoryName: props.ecr_repo ?? name
+    const ecrRepository = new ecr.Repository(this, "image", {
+      repositoryName: 'amazon-eks-' + name
     });
 
     /**
      * CodeCommit: create repository
     **/
-    const codecommitRepository = new codecommit.Repository(this, "Source", {
-      repositoryName: props.codecommit_repo ?? name
+    const codecommitRepository = new codecommit.Repository(this, "source", {
+      repositoryName: name
     });
 
+    const kubectlExecutionRole = iam.Role.fromRoleArn(this, 'amazon-eks-kubectl-role', "arn:aws:iam::" + this.account + ":role/AmazonEksKubectlRole")
 
     /**
      * CodeBuild:
      * 1. create codebuild project
      * 2. create policy of ECR and Codecommit
     **/
-    const codebuildProject = new codebuild.PipelineProject(this, "Build", {
-      projectName: props.codebuild_project ?? name,
-      environment: {
-        computeType: codebuild.ComputeType.SMALL,
-        buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_3,
-        privileged: true,
-        environmentVariables: {
-          AWS_ACCOUNT_ID: {
-            type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
-            value: cdk.Aws.ACCOUNT_ID
-          },
-          AWS_DEFAULT_REGION: {
-            type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
-            value: cdk.Aws.REGION
-          }
+    const codebuildProject = new codebuild.PipelineProject(this, "build", {
+        projectName: name,
+        role: kubectlExecutionRole,
+        buildSpec: codebuild.BuildSpec.fromObject(
+            yaml.load(
+                fs.readFileSync(
+                    'samples/codebuild/buildspec/deploy-eks-game2048.yml',
+                    'utf8'
+                )
+            ) as Record<string, any>[]
+        ),
+        environment: {
+            computeType: codebuild.ComputeType.SMALL,
+            buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_3,
+            privileged: true,
+            environmentVariables: {
+                AWS_ACCOUNT_ID: {
+                    type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
+                    value: cdk.Aws.ACCOUNT_ID
+                },
+                IMAGE_URI: {
+                    type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
+                    value: ecrRepository.repositoryUri
+                },
+                EKS_CLUSTER_NAME: {
+                    type: codebuild.BuildEnvironmentVariableType.PLAINTEXT,
+                    value: 'eks-sample'
+                }
+            }
         }
-      }
     });
-    // codebuild policy of codecommit pull source code.
-    const codeBuildPolicyOfcodeCommit = new iam.PolicyStatement();
-    codeBuildPolicyOfcodeCommit.addResources(codecommitRepository.repositoryArn)
-    codeBuildPolicyOfcodeCommit.addActions(
-      "codecommit:ListBranches",
-      "codecommit:ListRepositories",
-      "codecommit:BatchGetRepositories",
-      "codecommit:GitPull"
-    );
-    codebuildProject.addToRolePolicy(
-      codeBuildPolicyOfcodeCommit,
-    );
-    // codebuild policy of ecr build
-    const codeBuildPolicyEcr = new iam.PolicyStatement();
-    codeBuildPolicyEcr.addAllResources()
-    codeBuildPolicyEcr.addActions(
-      "ecr:GetAuthorizationToken",
-      "ecr:InitiateLayerUpload",
-      "ecr:UploadLayerPart",
-      "ecr:CompleteLayerUpload",
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:PutImage"
-    )
-    codebuildProject.addToRolePolicy(codeBuildPolicyEcr);
 
+    codecommitRepository.onCommit('OnCommit', {
+        target: new targets.CodeBuildProject(codebuildProject),
+    });
+    ecrRepository.grantPullPush(codebuildProject.role!);
 
     /**
      * CodePipeline:
@@ -136,7 +130,7 @@ export class CodePipelineDeployEcrImageStack extends cdk.Stack {
     const sourceOutput = new codepipeline.Artifact();
     const sourceAction = new codepipeline_actions.CodeCommitSourceAction({
       actionName: "Source-CodeCommit",
-      branch: props.codecommit_branch ?? 'master',
+      branch: props.codecommit_branch ?? 'main',
       trigger: codepipeline_actions.CodeCommitTrigger.POLL,
       repository: codecommitRepository,
       output: sourceOutput
@@ -154,7 +148,7 @@ export class CodePipelineDeployEcrImageStack extends cdk.Stack {
     });
 
     // create pipeline, and then add both codecommit and codebuild
-    const pipeline = new codepipeline.Pipeline(this, "Pipeline", {
+    const pipeline = new codepipeline.Pipeline(this, "pipeline", {
       pipelineName: props.codepipeline_name ?? name + '-pipeline'
     });
     pipeline.addStage({
@@ -170,7 +164,7 @@ export class CodePipelineDeployEcrImageStack extends cdk.Stack {
      * SNS: Monitor pipeline state change then notifiy
     **/
     if ( props.notifications_email ) {
-      const pipelineSnsTopic = new sns.Topic(this, 'DemoPipelineStageChange');
+      const pipelineSnsTopic = new sns.Topic(this, 'pipeline-stage-change');
       pipelineSnsTopic.addSubscription(new sns_subscriptions.EmailSubscription(props.notifications_email))
       pipeline.onStateChange("PipelineStateChange", {
         target: new targets.SnsTopic(pipelineSnsTopic),

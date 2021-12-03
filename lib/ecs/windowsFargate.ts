@@ -10,16 +10,19 @@ export interface EcsFargateProps extends cdk.StackProps {
     // readonly cluster_version: string;
 }
 
-export class EcsFargateCore extends cdk.Stack {
+export class EcsWindowsFargateCore extends cdk.Stack {
     constructor(scope: cdk.Construct, id: string, props: EcsFargateProps) {
         super(scope, id, props);
 
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }) || VpcProvider.createSimple(this); 
 
         // ecs
-        const cluster = new ecs.Cluster(this, 'ecs-fargate', { vpc });
+        const cluster = new ecs.Cluster(this, 'ecs-windows-fargate', {
+            vpc,
+            clusterName: 'ecs-windows-fargate'
+        });
 
-        const loadBalancer = new elb.ApplicationLoadBalancer(this, 'alb', {
+        const loadBalancer = new elb.ApplicationLoadBalancer(this, 'ApplicationLoadBalancer', {
             vpc,
             internetFacing: true,
             securityGroup: new ec2.SecurityGroup(this, 'AlbSecurityGroup', {

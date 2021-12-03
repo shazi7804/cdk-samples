@@ -1,0 +1,27 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+  pre_build:
+    commands:
+      - aws --version
+      - aws sts get-caller-identity
+      - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+      - aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name $EKS_CLUSTER_NAME
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...··········
+      - docker build -t localimage:latest .
+      - docker tag localimage:latest ${IMAGE_URI}:latest
+      - docker push $IMAGE_URI
+  post_build:
+    commands:
+      - kubectl get no
+      - kubectl describe deployment deployment-2048 -n game-2048
+      - kubectl set image deployment deployment-2048 app-2048=$IMAGE_URI:latest -n game-2048
+artifacts:
+  files:
+    - '**/*'
+  name: game2048-${CODEBUILD_BUILD_NUMBER}-${CODEBUILD_SOURCE_VERSION}
