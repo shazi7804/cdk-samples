@@ -1,7 +1,8 @@
-import cdk = require('@aws-cdk/core');
-import eks = require('@aws-cdk/aws-eks');
-import ec2 = require('@aws-cdk/aws-ec2');
-import iam = require('@aws-cdk/aws-iam');
+import * as cdk from'@aws-cdk/core';
+import * as eks from '@aws-cdk/aws-eks';
+import * as ec2 from '@aws-cdk/aws-ec2';
+import * as asg from '@aws-cdk/aws-autoscaling';
+import * as iam from '@aws-cdk/aws-iam';
 import { VpcProvider } from '../vpc';
 import { Stack } from '@aws-cdk/core';
 
@@ -35,14 +36,14 @@ export class EksWithWorkerNodeStack extends cdk.Stack {
             endpointAccess: eks.EndpointAccess.PRIVATE // No access outside of your VPC.
         });
 
-        cluster.addAutoScalingGroupCapacity('SpotWorker', {
-            vpcSubnets: { subnets: vpc.isolatedSubnets },
-            instanceType: new ec2.InstanceType(props.cluster_spot_instance_type),
-            maxInstanceLifetime: cdk.Duration.days(7),
-            spotPrice: props.cluster_spot_price,
-            minCapacity: props.cluster_spot_instance_min_capacity,
-        })
-        cluster.addAutoScalingGroupCapacity('DemandWorker', {
+        // cluster.addAutoScalingGroupCapacity('spot-worker-node', {
+        //     vpcSubnets: { subnets: vpc.isolatedSubnets },
+        //     instanceType: new ec2.InstanceType(props.cluster_spot_instance_type),
+        //     maxInstanceLifetime: cdk.Duration.days(7),
+        //     spotPrice: props.cluster_spot_price,
+        //     minCapacity: props.cluster_spot_instance_min_capacity,
+        // })
+        cluster.addAutoScalingGroupCapacity('demand-worker-node', {
             instanceType: new ec2.InstanceType(props.cluster_instance_type),
             maxInstanceLifetime: cdk.Duration.days(7),
             minCapacity: props.cluster_spot_instance_min_capacity,

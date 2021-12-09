@@ -4,14 +4,16 @@ import { ImportResources, ImportCloudFormationStack } from '../lib/import';
 import { EnableAwsGuarddutyStackSetStack } from '../lib/cloudformation'
 import { CloudTrailStack } from '../lib/cloudtrail';
 import { ApiGatewayCognitoStack } from '../lib/api-gateway';
-import { DirectoryMicrosoftAdCore } from '../lib/directory_service';
+import { MicrosoftAdStack } from '../lib/directoryService';
 import { CodePipelineStepfunctionStack,
          MultiPipelineOfApprovalStack } from '../lib/codepipeline';
 import { CloudFrontOrginS3Core } from '../lib/cloudfront';
-import { DataLakeCore } from '../lib/datalake';
+import { DataLakeCore } from '../lib/s3/datalake';
 import { TransferFamilyServerCore } from '../lib/transfer_family';
 import { KinesisFirehoseDestinationOpenSearchStack } from '../lib/kinesis';
 import { S3ObjectLambdaUppercaseCore } from '../lib/s3_object_lambda';
+import { Ec2StressHttpAutoscalingGroupStack,
+         Ec2WindowsWebJoinDomainAutoscalingGroupStack } from '../lib/ec2';
 import { EksWithWorkerNodeStack,
          EksWithFargateStack,
          EksEmrContainerStack,
@@ -27,9 +29,14 @@ import { TerraformBackendStack } from '../lib/terraform';
 
 const app = new cdk.App();
 
+const organization = { 
+    region: 'us-east-1',
+    account: '026625820024' // scottlwk-organization
+}
+
 const env = {
-    region: app.node.tryGetContext('region'),
-    account: app.node.tryGetContext('account')
+    region: 'us-east-1',
+    account: '381354187112' // scottlwk-linked
 };
 
 new EnableAwsGuarddutyStackSetStack(app, 'EnableAwsGuarddutyStackSetStack', { env })
@@ -49,7 +56,7 @@ new TransitGatewayStack(app, 'TransitGatewayStack', { env });
 // Applications
 new ApiGatewayCognitoStack(app, 'ApiGatewayCognitoStack', { env });
 
-new DirectoryMicrosoftAdCore(app, 'DirectoryMicrosoftAdCore', { env });
+new MicrosoftAdStack(app, 'MicrosoftAdStack', { env });
 
 // S3, Transfer Family
 new TransferFamilyServerCore(app, 'TransferFamilyServerCore', { env });
@@ -73,6 +80,10 @@ new GithubEnterPriseServerIntegrationCodeFamily(app, 'GithubEnterPriseServerInte
 // CodePipeline
 new CodePipelineStepfunctionStack(app, 'CodePipelineStepfunctionStack', { env });
 new MultiPipelineOfApprovalStack(app, 'MultiPipelineOfApprovalStack', { env });
+
+// Instances
+new Ec2StressHttpAutoscalingGroupStack(app, 'Ec2StressHttpAutoscalingGroupStack', { env })
+new Ec2WindowsWebJoinDomainAutoscalingGroupStack(app, 'Ec2WindowsWebJoinDomainAutoscalingGroupStack', { env: organization })
 
 // Containers
 new EksWithWorkerNodeStack(app, 'EksWithWorkerNodeStack', {

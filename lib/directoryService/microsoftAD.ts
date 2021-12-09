@@ -1,21 +1,21 @@
 import cdk = require('@aws-cdk/core');
 import ds = require('@aws-cdk/aws-directoryservice');
 import ec2 = require('@aws-cdk/aws-ec2');
-import { VpcProvider } from './vpc';
+import { VpcProvider } from '../vpc';
 
-export class DirectoryMicrosoftAdCore extends cdk.Stack {
+export class MicrosoftAdStack extends cdk.Stack {
     constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }); 
 
-        const ad = new ds.CfnMicrosoftAD(this, 'IdentityMicroftAD', {
+        const ad = new ds.CfnMicrosoftAD(this, 'microft-ad', {
             name: 'shazi.info',
             edition: 'Standard',
             password: '1qaz@WSX3edc$RFV',
             vpcSettings : {
                 subnetIds : vpc.selectSubnets({
-                    subnetType: ec2.SubnetType.PRIVATE,
+                    subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
                     // require select two subnet
                     availabilityZones: ['us-east-1a', 'us-east-1b']
                 }).subnetIds,

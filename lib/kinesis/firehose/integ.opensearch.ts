@@ -30,9 +30,10 @@ export class KinesisFirehoseDestinationOpenSearchStack extends cdk.Stack {
             securityGroups: [securityGroup],
             version: opensearch.EngineVersion.OPENSEARCH_1_0,
             removalPolicy: cdk.RemovalPolicy.DESTROY,
+            ebs: { enabled: false },
             capacity: {
                 masterNodes: 3,
-                masterNodeInstanceType: 'm6g.large.search',
+                masterNodeInstanceType: 'r6gd.large.search',
                 dataNodes: 4,
                 dataNodeInstanceType: 'r6gd.large.search'
             },
