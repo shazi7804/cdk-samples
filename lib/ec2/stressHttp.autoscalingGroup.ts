@@ -78,7 +78,7 @@ export class Ec2StressHttpAutoscalingGroupStack extends cdk.Stack {
             internetFacing: true,
             vpcSubnets: vpc.selectSubnets({
                 subnets: vpc.publicSubnets,
-            }),
+            })
         });
 
         const listener = lb.addListener('listener', {
@@ -87,7 +87,7 @@ export class Ec2StressHttpAutoscalingGroupStack extends cdk.Stack {
 
         listener.addTargets('targets', {
             port: 80,
-            targets: [web],
+            targets: [web]
         });
         listener.connections.allowDefaultPortFromAnyIpv4('Open to the world');
 

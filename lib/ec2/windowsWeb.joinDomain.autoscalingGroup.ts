@@ -31,9 +31,6 @@ export class Ec2WindowsWebJoinDomainAutoscalingGroupStack extends cdk.Stack {
             // Download and install Chocolately and use it to obtain webdeploy
             `Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))`,
             `choco install webdeploy -y`,
-            // Download and install the CodeDeploy agent from the regional bucket location
-            `Read-S3Object -BucketName aws-codedeploy-${this.region} -Key latest/codedeploy-agent.msi -File c:\\temp\\codedeploy-agent.msi c:\\temp\\codedeploy-agent.msi /quiet /l`, 
-            `c:\\temp\\host-agent-install-log.txt`,
             // Join domain
             `Set-Variable -name instance_id -value (Invoke-Restmethod -uri http://169.254.169.254/latest/meta-data/instance-id)`,
             `New-SSMAssociation -InstanceId $instance_id -Name "${directoryDocumentName}"`,
