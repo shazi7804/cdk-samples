@@ -3,7 +3,7 @@ import * as cdk from '@aws-cdk/core';
 import { ImportResources, ImportCloudFormationStack } from '../lib/import';
 import { EnableAwsGuarddutyStackSetStack } from '../lib/cloudformation'
 import { CloudTrailStack } from '../lib/cloudtrail';
-import { ApiGatewayCognitoStack } from '../lib/api-gateway';
+import { ApiGatewayCognitoStack } from '../lib/apiGateway';
 import { MicrosoftAdStack } from '../lib/directoryService';
 import { MultiSourceWithApprovalPipelineStack } from '../lib/codepipeline';
 import { CloudFrontOrginS3WithLambdaEdgeStack } from '../lib/cloudfront';
