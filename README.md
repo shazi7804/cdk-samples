@@ -30,11 +30,15 @@ AWS CDK sample list
 
 First bootstrap your cdk environment
 
-`cdk bootstrap`
+```
+$ cdk bootstrap
+```
 
 Deploy `Stack name` to your account:
 
-`cdk deploy ${stack_name}`
+```
+$ cdk deploy ${stack_name}
+```
 
 ## Author & Contact
 
