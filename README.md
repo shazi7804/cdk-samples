@@ -36,7 +36,9 @@ Deploy `Stack name` to your account:
 
 `cdk deploy ${stack_name}`
 
-## Author
+## Author & Contact
+
+The best way to interact with me is through GitHub. You can open an issue for help anything about AWS CDK.
 
 [shazi7804@](https://shazi.info/)
 
