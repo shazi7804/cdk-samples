@@ -17,7 +17,7 @@ AWS CDK sample list
 | **EksWithWorkerNodeStack** | Amazon EKS with managed node groups ||
 | **EksWithFargateStack** | Amazon EKS with AWS Fargate. ||
 | **EksIntegCodePipelineDeployStack** | Amazon EKS integrate AWS code series deployment pipeline ||
-| **EksEmrContainerStack** | Amazon EMR on EKS with AWS Fargate | [readme](https://reurl.cc/RbNREG) |
+| **EksEmrContainerStack** | Amazon EMR on EKS with AWS Fargate | [readmore](https://reurl.cc/RbNREG) |
 | **MultiSourceWithApprovalPipelineStack** | CodePipeline trigger sources from Amazon S3 and Codecommit ||
 | **CloudFrontOrginS3WithLambdaEdgeStack** | CloudFront serve static website with Lambda@Edge. ||
 | **S3ObjectLambdaUppercaseStack** | Amazon S3 transforming data with object lambda ||
