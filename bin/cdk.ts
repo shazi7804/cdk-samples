@@ -5,15 +5,15 @@ import { EnableAwsGuarddutyStackSetStack } from '../lib/cloudformation'
 import { CloudTrailStack } from '../lib/cloudtrail';
 import { ApiGatewayCognitoStack } from '../lib/api-gateway';
 import { MicrosoftAdStack } from '../lib/directoryService';
-import { CodePipelineStepfunctionStack,
-         MultiPipelineOfApprovalStack } from '../lib/codepipeline';
-import { CloudFrontOrginS3Core } from '../lib/cloudfront';
-import { DataLakeCore } from '../lib/s3/datalake';
-import { TransferFamilyServerCore } from '../lib/transfer_family';
+import { MultiSourceWithApprovalPipelineStack } from '../lib/codepipeline';
+import { CloudFrontOrginS3WithLambdaEdgeStack } from '../lib/cloudfront';
+import { DataLakeCore,
+         TransferFamilyServerStack,
+         S3ObjectLambdaUppercaseStack } from '../lib/s3';
 import { KinesisFirehoseDestinationOpenSearchStack } from '../lib/kinesis';
-import { S3ObjectLambdaUppercaseCore } from '../lib/s3_object_lambda';
 import { Ec2StressHttpAutoscalingGroupStack,
-         Ec2WindowsWebJoinDomainAutoscalingGroupStack } from '../lib/ec2';
+         Ec2WindowsWebJoinDomainAutoscalingGroupStack,
+         GithubEnterpriseServerStack } from '../lib/ec2';
 import { EksWithWorkerNodeStack,
          EksWithFargateStack,
          EksEmrContainerStack,
@@ -23,7 +23,6 @@ import { EcsFargateCore,
 import { VpcSimpleCreate,
          VpcClienVpnStack,
          TransitGatewayStack } from '../lib/vpc';
-import { GithubEnterPriseServerIntegrationCodeFamily } from '../lib/github_ enterprise_codebuild_eks'
 import { BlockchainCore } from '../lib/blockchain'
 import { TerraformBackendStack } from '../lib/terraform';
 
@@ -58,10 +57,12 @@ new ApiGatewayCognitoStack(app, 'ApiGatewayCognitoStack', { env });
 
 new MicrosoftAdStack(app, 'MicrosoftAdStack', { env });
 
-// S3, Transfer Family
-new TransferFamilyServerCore(app, 'TransferFamilyServerCore', { env });
+// AWS CloudFront
+new CloudFrontOrginS3WithLambdaEdgeStack(app, 'CloudFrontOrginS3Core', { env })
 
-new S3ObjectLambdaUppercaseCore(app, 'S3ObjectLambdaUppercaseCore', { env });
+// S3, Transfer Family
+new TransferFamilyServerStack(app, 'TransferFamilyServerCore', { env });
+new S3ObjectLambdaUppercaseStack(app, 'S3ObjectLambdaUppercaseStack', { env });
 
 // new DataLakeCore(app, 'DataLakeCore', {
 //     env,
@@ -72,14 +73,13 @@ new S3ObjectLambdaUppercaseCore(app, 'S3ObjectLambdaUppercaseCore', { env });
 // Kinesis
 new KinesisFirehoseDestinationOpenSearchStack(app, 'KinesisFirehoseDestinationOpenSearchStack', { env })
 
-new GithubEnterPriseServerIntegrationCodeFamily(app, 'GithubEnterPriseServerIntegrationCodeFamily', { env,
+new GithubEnterpriseServerStack(app, 'GithubEnterpriseServerStack', { env,
     myip: app.node.tryGetContext('myip'),
     keypair_name: app.node.tryGetContext('keypair_name'),
 })
 
 // CodePipeline
-new CodePipelineStepfunctionStack(app, 'CodePipelineStepfunctionStack', { env });
-new MultiPipelineOfApprovalStack(app, 'MultiPipelineOfApprovalStack', { env });
+new MultiSourceWithApprovalPipelineStack(app, 'MultiSourceWithApprovalPipelineStack', { env });
 
 // Instances
 new Ec2StressHttpAutoscalingGroupStack(app, 'Ec2StressHttpAutoscalingGroupStack', { env })
@@ -122,10 +122,6 @@ new EcsFargateCore(app, 'EcsFargateCore', { env,
 });
 
 new EcsScalingBySqsStack(app, 'EcsScalingBySqsStack', { env });
-
-
-// AWS CloudFront
-new CloudFrontOrginS3Core(app, 'CloudFrontOrginS3Core', { env })
 
 // Blockchain
 // new BlockchainCore(app, 'BlockchainCore', { env })

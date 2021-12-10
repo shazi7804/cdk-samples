@@ -1,27 +1,18 @@
 import cdk = require('@aws-cdk/core');
 import ec2 = require('@aws-cdk/aws-ec2');
-import s3 = require('@aws-cdk/aws-s3');
 import autoscaling = require('@aws-cdk/aws-autoscaling');
 import iam = require('@aws-cdk/aws-iam');
-import codebuild = require("@aws-cdk/aws-codebuild");
-import eks = require("@aws-cdk/aws-eks");
-import ecr = require("@aws-cdk/aws-ecr");
-import codepipeline = require("@aws-cdk/aws-codepipeline");
-import { VpcProvider } from './vpc';
+import { VpcProvider } from '../vpc';
 
-const DEFAULT_CLUSTER_VERSION = '1.17'
-const DEFAULT_CLUSTER_NAME = 'default-cluster-name'
 
-export interface GithubEnterPriseServerIntegrationCodeFamilyProps extends cdk.StackProps {
+export interface GithubEnterpriseServerStackProps extends cdk.StackProps {
     readonly myip: string;
     readonly keypair_name?: string;
 }
 
-export class GithubEnterPriseServerIntegrationCodeFamily extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props: GithubEnterPriseServerIntegrationCodeFamilyProps) {
+export class GithubEnterpriseServerStack extends cdk.Stack {
+    constructor(scope: cdk.App, id: string, props: GithubEnterpriseServerStackProps) {
         super(scope, id, props);
-
-        const clusterVersion = this.node.tryGetContext('cluster_version') ?? DEFAULT_CLUSTER_VERSION
 
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }) || VpcProvider.createSimple(this); 
 
@@ -48,7 +39,7 @@ export class GithubEnterPriseServerIntegrationCodeFamily extends cdk.Stack {
             machineImage: ami,
             minCapacity: 1,
             maxCapacity: 1,
-            vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE },
+            vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_NAT },
             keyName: props.keypair_name,
             blockDevices: [
                 {

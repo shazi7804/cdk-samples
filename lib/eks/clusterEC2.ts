@@ -36,13 +36,14 @@ export class EksWithWorkerNodeStack extends cdk.Stack {
             endpointAccess: eks.EndpointAccess.PRIVATE // No access outside of your VPC.
         });
 
-        // cluster.addAutoScalingGroupCapacity('spot-worker-node', {
-        //     vpcSubnets: { subnets: vpc.isolatedSubnets },
-        //     instanceType: new ec2.InstanceType(props.cluster_spot_instance_type),
-        //     maxInstanceLifetime: cdk.Duration.days(7),
-        //     spotPrice: props.cluster_spot_price,
-        //     minCapacity: props.cluster_spot_instance_min_capacity,
-        // })
+        cluster.addAutoScalingGroupCapacity('spot-worker-node', {
+            vpcSubnets: { subnets: vpc.isolatedSubnets },
+            instanceType: new ec2.InstanceType(props.cluster_spot_instance_type),
+            maxInstanceLifetime: cdk.Duration.days(7),
+            spotPrice: props.cluster_spot_price,
+            minCapacity: props.cluster_spot_instance_min_capacity,
+        })
+        
         cluster.addAutoScalingGroupCapacity('demand-worker-node', {
             instanceType: new ec2.InstanceType(props.cluster_instance_type),
             maxInstanceLifetime: cdk.Duration.days(7),

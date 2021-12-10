@@ -28,7 +28,7 @@ export class EcsFargateCore extends cdk.Stack {
             })
         });
 
-          // Redirect to HTTP
+        // Redirect to HTTP
         // const listenerHttp = loadBalancer.addListener('http-listener', {
         //     port: 80,
         //     protocol: elb.ApplicationProtocol.HTTP,

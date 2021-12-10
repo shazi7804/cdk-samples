@@ -8,12 +8,12 @@ import { Stack } from '@aws-cdk/core';
 import * as path from 'path';
 import * as hasha from 'hasha';
 
-export interface CloudFrontOrginS3CoreProps extends cdk.StackProps {
+export interface CloudFrontOrginS3WithLambdaEdgeStackProps extends cdk.StackProps {
 
 }
 
-export class CloudFrontOrginS3Core extends cdk.Stack {
-    constructor(scope: cdk.Construct, id: string, props: CloudFrontOrginS3CoreProps) {
+export class CloudFrontOrginS3WithLambdaEdgeStack extends cdk.Stack {
+    constructor(scope: cdk.Construct, id: string, props: CloudFrontOrginS3WithLambdaEdgeStackProps) {
         super(scope, id, props);
 
         const bucket = new s3.Bucket(this, "WebsiteBucket", {

@@ -3,7 +3,7 @@ import s3 = require('@aws-cdk/aws-s3');
 import iam = require('@aws-cdk/aws-iam');
 import tf = require('@aws-cdk/aws-transfer');
 
-export class TransferFamilyServerCore extends cdk.Stack {
+export class TransferFamilyServerStack extends cdk.Stack {
     constructor(scope: cdk.App, id: string, props?: cdk.StageProps) {
         super(scope, id, props);
 

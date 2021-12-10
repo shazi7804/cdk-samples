@@ -6,11 +6,11 @@ import codepipeline_actions = require("@aws-cdk/aws-codepipeline-actions");
 import iam = require("@aws-cdk/aws-iam");
 import s3 = require('@aws-cdk/aws-s3');
 
-export interface MultiPipelineOfApprovalStackProps extends cdk.StackProps {
+export interface MultiSourceWithApprovalPipelineStackProps extends cdk.StackProps {
 }
 
-export class MultiPipelineOfApprovalStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props: MultiPipelineOfApprovalStackProps) {
+export class MultiSourceWithApprovalPipelineStack extends cdk.Stack {
+    constructor(scope: cdk.App, id: string, props: MultiSourceWithApprovalPipelineStackProps) {
         super(scope, id, props);
 
         // define multi-source

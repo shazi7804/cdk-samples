@@ -5,7 +5,7 @@ import lambda = require("@aws-cdk/aws-lambda");
 import s3object = require("@aws-cdk/aws-s3objectlambda");
 
 
-export class S3ObjectLambdaUppercaseCore extends cdk.Stack {
+export class S3ObjectLambdaUppercaseStack extends cdk.Stack {
     constructor(scope: cdk.App, id: string, props?: cdk.StageProps) {
         super(scope, id, props);
 
