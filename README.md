@@ -4,8 +4,8 @@ AWS CDK sample list
 
 ## Samples
 
-| Stack name  | Description   | Noted
-| ----------- | ------------- |
+| Stack name  | Description   | Noted |
+| ----------- | ------------- | ----- |
 | **VpcSimpleCreate** | Amazon VPC simple network with public, private and isolated subnets. ||
 | **VpcClienVpnStack** | AWS Client VPN create with Cloudwatch logs. | [readmore](https://reurl.cc/Yjxm0D) |
 | **TransitGatewayStack** | Transit Gateway simple network ||
