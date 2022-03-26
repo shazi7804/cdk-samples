@@ -83,7 +83,7 @@ new MultiSourceWithApprovalPipelineStack(app, 'MultiSourceWithApprovalPipelineSt
 
 // Instances
 new Ec2StressHttpAutoscalingGroupStack(app, 'Ec2StressHttpAutoscalingGroupStack', { env })
-new Ec2WindowsWebJoinDomainAutoscalingGroupStack(app, 'Ec2WindowsWebJoinDomainAutoscalingGroupStack', { env: organization })
+new Ec2WindowsWebJoinDomainAutoscalingGroupStack(app, 'Ec2WindowsWebJoinDomainAutoscalingGroupStack', { env })
 
 // Containers
 new EksWithWorkerNodeStack(app, 'EksWithWorkerNodeStack', {

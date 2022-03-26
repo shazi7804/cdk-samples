@@ -22,7 +22,7 @@ export class Ec2WindowsWebJoinDomainAutoscalingGroupStack extends cdk.Stack {
 
         /////////////////////////////////////////////////////
         // Directory domain information store in System Manager document
-        const directoryDocumentName = "awsconfig_Domain_d-90676dc3e7_shazi.info"
+        const directoryDocumentName = "awsconfig_Domain_d-90675613d8_directory.aws"
 
         userData.addCommands(
             `Set-DefaultAWSRegion -Region ${this.region}`,

@@ -10,14 +10,13 @@ export class MicrosoftAdStack extends cdk.Stack {
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }); 
 
         const ad = new ds.CfnMicrosoftAD(this, 'microft-ad', {
-            name: 'shazi.info',
-            edition: 'Standard',
+            name: 'directory.aws',
+            edition: 'Enterprise',
             password: '1qaz@WSX3edc$RFV',
             vpcSettings : {
                 subnetIds : vpc.selectSubnets({
                     subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
-                    // require select two subnet
-                    availabilityZones: ['us-east-1a', 'us-east-1b']
+                    onePerAz: true,
                 }).subnetIds,
                 vpcId : vpc.vpcId
             },
@@ -27,32 +26,3 @@ export class MicrosoftAdStack extends cdk.Stack {
         });
     }
 }
-
-// export class DirectoryProvider extends cdk.Stack {
-//     public static createMicrosoftAd(scope: cdk.Construct) {
-//         const stack = cdk.Stack.of(scope)
-
-//         const vpc = VpcProvider.createSimple(stack);
-
-//         const directoryService = new ds.CfnMicrosoftAD(stack, 'IdentityMicroftAD', {
-//                         name: 'scottliao.com',
-//                         edition: 'Standard',
-//                         password: '1qaz@WSX3edc$RFV',
-//                         vpcSettings : {
-//                             subnetIds : vpc.selectSubnets({
-//                                 subnetType: ec2.SubnetType.PRIVATE,
-//                                 // require select two subnet
-//                                 availabilityZones: ['us-east-1a', 'us-east-1c']
-//                             }).subnetIds,
-//                             vpcId : vpc.vpcId
-//                         },
-//                         // if you enable with SSO 
-//                         createAlias: true,
-//                         enableSso: true
-//                     });
-
-//         cdk.Tag.add(vpc.stack, 'cdk-stack', 'VpcProvider');
-
-//     return directoryService
-//     }
-// }
