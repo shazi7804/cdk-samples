@@ -1,10 +1,10 @@
-import cdk = require('@aws-cdk/core');
-import cf = require('@aws-cdk/aws-cloudfront');
-import iam = require('@aws-cdk/aws-iam');
-import s3 = require('@aws-cdk/aws-s3');
-import s3d = require('@aws-cdk/aws-s3-deployment');
-import lambda = require('@aws-cdk/aws-lambda');
-import { Stack } from '@aws-cdk/core';
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import cf = require('aws-cdk-lib/aws-cloudfront');
+import iam = require('aws-cdk-lib/aws-iam');
+import s3 = require('aws-cdk-lib/aws-s3');
+import s3d = require('aws-cdk-lib/aws-s3-deployment');
+import lambda = require('aws-cdk-lib/aws-lambda');
 import * as path from 'path';
 import * as hasha from 'hasha';
 
@@ -13,7 +13,7 @@ export interface CloudFrontOrginS3WithLambdaEdgeStackProps extends cdk.StackProp
 }
 
 export class CloudFrontOrginS3WithLambdaEdgeStack extends cdk.Stack {
-    constructor(scope: cdk.Construct, id: string, props: CloudFrontOrginS3WithLambdaEdgeStackProps) {
+    constructor(scope: Construct, id: string, props: CloudFrontOrginS3WithLambdaEdgeStackProps) {
         super(scope, id, props);
 
         const bucket = new s3.Bucket(this, "WebsiteBucket", {
@@ -41,36 +41,26 @@ export class CloudFrontOrginS3WithLambdaEdgeStack extends cdk.Stack {
         });
 
         /// URL Rewrite of CloudFront Origin request
-        const urlRewriteLambda = new lambda.Function(this, "UrlRewriteHandler", {
+        // const rewriteLambda = new lambda.Function(this, "UrlRewriteHandler", {
+        //     code: new lambda.AssetCode("./samples/lambda/cloudfrontUrlRewrite"),
+        //     handler: "index.handler",
+        //     runtime: lambda.Runtime.NODEJS_12_X,
+        //     role: edgeLambdaExecutionRole
+        // });
+        const rewriteLambda = new cf.experimental.EdgeFunction(this, "rewriteHandler", {
             code: new lambda.AssetCode("./samples/lambda/cloudfrontUrlRewrite"),
             handler: "index.handler",
             runtime: lambda.Runtime.NODEJS_12_X,
             role: edgeLambdaExecutionRole
         });
-        
-        const urlRewriteLambdaVersion = urlRewriteLambda.addVersion(
-            `:sha256:${hasha.fromFileSync(
-                './samples/lambda/cloudfrontUrlRewrite/index.js'
-            )}`
-        )
 
         /// Modify header of CloudFront Origin response  
-        const responseHeaderLambda = new lambda.Function(this, "ReponseHeaderHandler", {
+        const responseHeaderLambda = new cf.experimental.EdgeFunction(this, "ReponseHeaderHandler", {
             code: new lambda.AssetCode("./samples/lambda/cloudfrontUrlRewrite"),
             handler: "index.handler",
             runtime: lambda.Runtime.NODEJS_12_X,
             role: edgeLambdaExecutionRole
         });
-        
-        // const responseHeaderLambdaVersion = responseHeaderLambda.addVersion(
-        //     `:sha256:${hasha.fromFileSync(
-        //         './samples/lambda/cloudfrontModifyResponseHeader/index.js'
-        //     )}`
-        // )
-
-        const responseHeaderLambdaVersion = new lambda.Version(this, "responseHeaderLambdaVersion", {
-            lambda: responseHeaderLambda,
-          });
 
         const cloudfront = new cf.CloudFrontWebDistribution(this, 'MyAppCloudFront', {
             originConfigs: [
@@ -83,11 +73,11 @@ export class CloudFrontOrginS3WithLambdaEdgeStack extends cdk.Stack {
                         lambdaFunctionAssociations: [
                             {
                                 eventType: cf.LambdaEdgeEventType.ORIGIN_REQUEST,
-                                lambdaFunction: urlRewriteLambdaVersion
+                                lambdaFunction: rewriteLambda
                             },
                             {
                                 eventType: cf.LambdaEdgeEventType.ORIGIN_RESPONSE,
-                                lambdaFunction: responseHeaderLambdaVersion
+                                lambdaFunction: responseHeaderLambda
                             }
                         ]
                     }]
@@ -100,9 +90,5 @@ export class CloudFrontOrginS3WithLambdaEdgeStack extends cdk.Stack {
         // Outputs
         new cdk.CfnOutput(this, 'BucketName', { value:bucket.bucketName });
         new cdk.CfnOutput(this, 'CloudFrontWebsiteUrlExport', { value:cloudfront.distributionDomainName });
-        new cdk.CfnOutput(this, 'LambdaFunctionName_UrlRewrite', { value: urlRewriteLambda.functionName });
-        new cdk.CfnOutput(this, 'LambdaFunctionVersion_UrlRewrite', { value: urlRewriteLambdaVersion.version });
-        new cdk.CfnOutput(this, 'LambdaFunctionName_ModifyReponseHeader', { value: responseHeaderLambda.functionName });
-        // new cdk.CfnOutput(this, 'LambdaFunctionVersion_ModifyReponseHeader', { value: responseHeaderLambdaVersion.version });
     }
 }

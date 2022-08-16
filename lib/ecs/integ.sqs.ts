@@ -1,12 +1,13 @@
-import * as cdk from "@aws-cdk/core";
-import * as ec2 from "@aws-cdk/aws-ec2";
-import * as ecr from "@aws-cdk/aws-ecr";
-import * as ecs from "@aws-cdk/aws-ecs";
-import * as sqs from "@aws-cdk/aws-sqs";
-import * as iam from "@aws-cdk/aws-iam";
-import * as logs from "@aws-cdk/aws-logs";
-import * as asg from "@aws-cdk/aws-autoscaling";
-import * as apigw from "@aws-cdk/aws-apigateway";
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import * as ec2 from "aws-cdk-lib/aws-ec2";
+import * as ecr from "aws-cdk-lib/aws-ecr";
+import * as ecs from "aws-cdk-lib/aws-ecs";
+import * as sqs from "aws-cdk-lib/aws-sqs";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as logs from "aws-cdk-lib/aws-logs";
+import * as asg from "aws-cdk-lib/aws-autoscaling";
+import * as apigw from "aws-cdk-lib/aws-apigateway";
 import { VpcProvider } from '../vpc';
 
 export interface EcsScalingBySqsStackProps extends cdk.StackProps {
@@ -14,7 +15,7 @@ export interface EcsScalingBySqsStackProps extends cdk.StackProps {
 }
 
 export class EcsScalingBySqsStack extends cdk.Stack {
-    constructor(scope: cdk.Construct, id: string, props: EcsScalingBySqsStackProps) {
+    constructor(scope: Construct, id: string, props: EcsScalingBySqsStackProps) {
         super(scope, id, props);
 
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }) || VpcProvider.createSimple(this); 

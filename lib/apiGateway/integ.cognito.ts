@@ -1,7 +1,8 @@
-import cdk = require('@aws-cdk/core');
-import cognito = require("@aws-cdk/aws-cognito");
-import lambda = require("@aws-cdk/aws-lambda");
-import apigw = require("@aws-cdk/aws-apigatewayv2");
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import cognito = require("aws-cdk-lib/aws-cognito");
+import lambda = require("aws-cdk-lib/aws-lambda");
+import apigw = require("@aws-cdk/aws-apigatewayv2-alpha");
 
 export interface ApiGatewayCognitoStackProps extends cdk.StackProps {
     readonly amazonIdpClientId?: string;
@@ -9,8 +10,8 @@ export interface ApiGatewayCognitoStackProps extends cdk.StackProps {
 }
 
 export class ApiGatewayCognitoStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props: ApiGatewayCognitoStackProps) {
-        super(scope, id, props);
+    constructor(scope: Construct, id: string, props?: ApiGatewayCognitoStackProps) {
+        super(scope, id);
 
         const userPool = new cognito.UserPool(this, "UserPool", {
             signInAliases: {
@@ -38,17 +39,15 @@ export class ApiGatewayCognitoStack extends cdk.Stack {
             runtime: lambda.Runtime.NODEJS_12_X,
         });
 
-        const api = new apigw.HttpApi(this, 'ApiGwHttp');
+        const httpApi = new apigw.HttpApi(this, 'ApiGwHttp');
 
-        const cognitoAuthrizer = new apigw.CfnAuthorizer(this, 'ApiAuth', {
-            apiId: api.httpApiId,
-            name: "cognitoAuthorizer",
-            authorizerType: 'JWT',
+        const cognitoAuthrizer = new apigw.HttpAuthorizer(this, 'ApiAuth', {
+            httpApi,
+            authorizerName: "cognitoAuthorizer",
+            type: apigw.HttpAuthorizerType.JWT,
             identitySource: ["$request.header.Authorization"],
-            jwtConfiguration: {
-                issuer: "https://martzcodes.us.auth0.com/",
-                audience: ["https://martzcodes.us.auth0.com/api/v2/"],
-            },
+            jwtIssuer: 'https://martzcodes.us.auth0.com/',
+            jwtAudience: ["https://martzcodes.us.auth0.com/api/v2/"]
         })
 
         // const cognitoAuthrizer = new apigw.CfnAuthorizer(this, `${id}-AuthUserPool`, {

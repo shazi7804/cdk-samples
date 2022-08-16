@@ -1,14 +1,15 @@
-import cdk = require('@aws-cdk/core');
-import s3 = require('@aws-cdk/aws-s3');
-import cloudtrail = require('@aws-cdk/aws-cloudtrail');
-import logs = require('@aws-cdk/aws-logs');
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import s3 = require('aws-cdk-lib/aws-s3');
+import cloudtrail = require('aws-cdk-lib/aws-cloudtrail');
+import logs = require('aws-cdk-lib/aws-logs');
 
 export interface CloudTrailStackProps extends cdk.StackProps {
 
 }
 
 export class CloudTrailStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props: CloudTrailStackProps) {
+    constructor(scope: Construct, id: string, props: CloudTrailStackProps) {
         super(scope, id, props);
 
         const bucket = new s3.Bucket(this, 'cloudtrail-bucket', {

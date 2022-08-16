@@ -1,16 +1,17 @@
-import cdk = require("@aws-cdk/core");
-import codecommit = require("@aws-cdk/aws-codecommit");
-import codebuild = require("@aws-cdk/aws-codebuild");
-import codepipeline = require("@aws-cdk/aws-codepipeline");
-import codepipeline_actions = require("@aws-cdk/aws-codepipeline-actions");
-import iam = require("@aws-cdk/aws-iam");
-import s3 = require('@aws-cdk/aws-s3');
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import codecommit = require("aws-cdk-lib/aws-codecommit");
+import codebuild = require("aws-cdk-lib/aws-codebuild");
+import codepipeline = require("aws-cdk-lib/aws-codepipeline");
+import codepipeline_actions = require("aws-cdk-lib/aws-codepipeline-actions");
+import iam = require("aws-cdk-lib/aws-iam");
+import s3 = require('aws-cdk-lib/aws-s3');
 
 export interface MultiSourceWithApprovalPipelineStackProps extends cdk.StackProps {
 }
 
 export class MultiSourceWithApprovalPipelineStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props: MultiSourceWithApprovalPipelineStackProps) {
+    constructor(scope: Construct, id: string, props: MultiSourceWithApprovalPipelineStackProps) {
         super(scope, id, props);
 
         // define multi-source

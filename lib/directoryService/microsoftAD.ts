@@ -1,10 +1,10 @@
-import cdk = require('@aws-cdk/core');
-import ds = require('@aws-cdk/aws-directoryservice');
-import ec2 = require('@aws-cdk/aws-ec2');
-import { VpcProvider } from '../vpc';
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import ds = require('aws-cdk-lib/aws-directoryservice');
+import ec2 = require('aws-cdk-lib/aws-ec2');
 
 export class MicrosoftAdStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
+    constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }); 

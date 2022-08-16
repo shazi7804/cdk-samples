@@ -1,10 +1,11 @@
-import cdk = require('@aws-cdk/core');
-import s3 = require('@aws-cdk/aws-s3');
-import iam = require('@aws-cdk/aws-iam');
-import tf = require('@aws-cdk/aws-transfer');
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import s3 = require('aws-cdk-lib/aws-s3');
+import iam = require('aws-cdk-lib/aws-iam');
+import tf = require('aws-cdk-lib/aws-transfer');
 
 export class TransferFamilyServerStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props?: cdk.StageProps) {
+    constructor(scope: Construct, id: string, props?: cdk.StageProps) {
         super(scope, id, props);
 
         // S3 Bucket: transfer-family-sftp-${region}-${accountId}

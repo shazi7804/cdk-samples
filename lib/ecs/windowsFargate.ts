@@ -1,8 +1,9 @@
-import cdk = require('@aws-cdk/core');
-import ec2 = require('@aws-cdk/aws-ec2');
-import ecs = require('@aws-cdk/aws-ecs');
-import elb = require('@aws-cdk/aws-elasticloadbalancingv2');
-import iam = require('@aws-cdk/aws-iam');
+import cdk = require('aws-cdk-lib');
+import { Construct } from 'constructs';
+import ec2 = require('aws-cdk-lib/aws-ec2');
+import ecs = require('aws-cdk-lib/aws-ecs');
+import elb = require('aws-cdk-lib/aws-elasticloadbalancingv2');
+import iam = require('aws-cdk-lib/aws-iam');
 import { VpcProvider } from '../vpc';
 
 export interface EcsFargateProps extends cdk.StackProps {
@@ -11,7 +12,7 @@ export interface EcsFargateProps extends cdk.StackProps {
 }
 
 export class EcsWindowsFargateCore extends cdk.Stack {
-    constructor(scope: cdk.Construct, id: string, props: EcsFargateProps) {
+    constructor(scope: Construct, id: string, props: EcsFargateProps) {
         super(scope, id, props);
 
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }) || VpcProvider.createSimple(this); 

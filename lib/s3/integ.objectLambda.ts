@@ -1,12 +1,13 @@
-import cdk = require('@aws-cdk/core');
-import s3 = require('@aws-cdk/aws-s3');
-import iam = require('@aws-cdk/aws-iam');
-import lambda = require("@aws-cdk/aws-lambda");
-import s3object = require("@aws-cdk/aws-s3objectlambda");
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import s3 = require('aws-cdk-lib/aws-s3');
+import iam = require('aws-cdk-lib/aws-iam');
+import lambda = require("aws-cdk-lib/aws-lambda");
+import s3object = require("aws-cdk-lib/aws-s3objectlambda");
 
 
 export class S3ObjectLambdaUppercaseStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props?: cdk.StageProps) {
+    constructor(scope: Construct, id: string, props?: cdk.StageProps) {
         super(scope, id, props);
 
         // S3 Bucket: object-lambda-${region}-${accountId}

@@ -1,5 +1,6 @@
-import cdk = require('@aws-cdk/core');
-import ec2 = require('@aws-cdk/aws-ec2');
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import ec2 = require('aws-cdk-lib/aws-ec2');
 import { VpcProvider } from '../vpc';
 
 
@@ -9,7 +10,7 @@ export interface TransitGatewayStackProps extends cdk.StackProps {
 }
 
 export class TransitGatewayStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props: TransitGatewayStackProps) {
+    constructor(scope: Construct, id: string, props: TransitGatewayStackProps) {
         super(scope, id, props);
 
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }) || VpcProvider.createSimple(this); 

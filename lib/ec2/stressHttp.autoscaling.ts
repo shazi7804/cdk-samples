@@ -1,8 +1,9 @@
-import * as cdk from'@aws-cdk/core';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as asg from '@aws-cdk/aws-autoscaling';
-import * as iam from '@aws-cdk/aws-iam';
-import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as asg from 'aws-cdk-lib/aws-autoscaling';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { VpcProvider } from '../vpc';
 
 export interface Ec2StressHttpAutoscalingGroupStackProps extends cdk.StackProps {
@@ -10,7 +11,7 @@ export interface Ec2StressHttpAutoscalingGroupStackProps extends cdk.StackProps 
 }
 
 export class Ec2StressHttpAutoscalingGroupStack extends cdk.Stack {
-    constructor(scope: cdk.Construct, id: string, props: Ec2StressHttpAutoscalingGroupStackProps) {
+    constructor(scope: Construct, id: string, props: Ec2StressHttpAutoscalingGroupStackProps) {
         super(scope, id, props);
 
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }) || VpcProvider.createSimple(this); 

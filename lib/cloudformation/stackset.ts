@@ -1,5 +1,5 @@
-import cdk = require('@aws-cdk/core');
-import cfn = require('@aws-cdk/aws-cloudformation');
+import cdk = require("aws-cdk-lib");
+import cfn = require('aws-cdk-lib/aws-cloudformation');
 
 export interface EnableAwsGuarddutyStackSetStackProps extends cdk.StackProps {
 

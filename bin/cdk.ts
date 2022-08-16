@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import * as cdk from '@aws-cdk/core';
+import * as cdk from 'aws-cdk-lib';
 import { ImportResources, ImportCloudFormationStack } from '../lib/import';
 import { EnableAwsGuarddutyStackSetStack } from '../lib/cloudformation'
 import { CloudTrailStack } from '../lib/cloudtrail';
@@ -7,6 +7,7 @@ import { ApiGatewayCognitoStack } from '../lib/apiGateway';
 import { MicrosoftAdStack } from '../lib/directoryService';
 import { MultiSourceWithApprovalPipelineStack } from '../lib/codepipeline';
 import { CloudFrontOrginS3WithLambdaEdgeStack } from '../lib/cloudfront';
+import { SimpleDynamoDBTableStack } from '../lib/dynamodb';
 import { DataLakeCore,
          TransferFamilyServerStack,
          S3ObjectLambdaUppercaseStack } from '../lib/s3';
@@ -122,6 +123,9 @@ new EcsFargateCore(app, 'EcsFargateCore', { env,
 });
 
 new EcsScalingBySqsStack(app, 'EcsScalingBySqsStack', { env });
+
+// Database
+new SimpleDynamoDBTableStack(app, 'SimpleDynamoDBTableStack', { env });
 
 // Blockchain
 // new BlockchainCore(app, 'BlockchainCore', { env })

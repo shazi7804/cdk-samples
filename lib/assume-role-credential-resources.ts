@@ -1,5 +1,6 @@
-import * as cdk from '@aws-cdk/core';
-import * as iam from '@aws-cdk/aws-iam';
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import * as iam from 'aws-cdk-lib/aws-iam';
 
 export interface RequiredResourcesStackProps extends cdk.StackProps {
   /**
@@ -11,7 +12,7 @@ export interface RequiredResourcesStackProps extends cdk.StackProps {
 }
 
 export class RequiredResourcesStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props: RequiredResourcesStackProps) {
+  constructor(scope: Construct, id: string, props: RequiredResourcesStackProps) {
     super(scope, id, props);
 
     // the role to assume when the CDK is in read mode, i.e. synth

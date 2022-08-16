@@ -1,9 +1,10 @@
-import cdk = require('@aws-cdk/core');
-import s3 = require('@aws-cdk/aws-s3');
-import lf = require('@aws-cdk/aws-lakeformation');
-import glue = require('@aws-cdk/aws-glue');
-import iam = require('@aws-cdk/aws-iam');
-import ec2 = require('@aws-cdk/aws-ec2');
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import s3 = require('aws-cdk-lib/aws-s3');
+import lf = require('aws-cdk-lib/aws-lakeformation');
+import glue = require('aws-cdk-lib/aws-glue');
+import iam = require('aws-cdk-lib/aws-iam');
+import ec2 = require('aws-cdk-lib/aws-ec2');
 
 export interface DataLakeCoreProps extends cdk.StackProps {
     readonly datalake_lakeformation_admin_arn: string;
@@ -11,7 +12,7 @@ export interface DataLakeCoreProps extends cdk.StackProps {
 }
 
 export class DataLakeCore extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props: DataLakeCoreProps) {
+    constructor(scope: Construct, id: string, props: DataLakeCoreProps) {
         super(scope, id, props);
 
         const datalake = new s3.Bucket(this, 'datalake', {

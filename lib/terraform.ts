@@ -1,12 +1,13 @@
-import cdk = require("@aws-cdk/core");
-import ddb = require("@aws-cdk/aws-dynamodb");
-import s3 = require("@aws-cdk/aws-s3");
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import ddb = require("aws-cdk-lib/aws-dynamodb");
+import s3 = require("aws-cdk-lib/aws-s3");
 
 export interface TerraformBackendStackProps extends cdk.StackProps {
 }
 
 export class TerraformBackendStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props: TerraformBackendStackProps) {
+    constructor(scope: Construct, id: string, props: TerraformBackendStackProps) {
         super(scope, id, props);
 
         const stateRemote = new s3.Bucket(this, 'StateRemote', {

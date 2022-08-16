@@ -1,13 +1,14 @@
-import cdk = require("@aws-cdk/core");
-import codecommit = require("@aws-cdk/aws-codecommit");
-import codebuild = require("@aws-cdk/aws-codebuild");
-import codepipeline = require("@aws-cdk/aws-codepipeline");
-import codepipeline_actions = require("@aws-cdk/aws-codepipeline-actions");
-import iam = require("@aws-cdk/aws-iam");
-import ecr = require("@aws-cdk/aws-ecr");
-import sns = require("@aws-cdk/aws-sns");
-import sns_subscriptions = require("@aws-cdk/aws-sns-subscriptions");
-import targets = require("@aws-cdk/aws-events-targets");
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import codecommit = require("aws-cdk-lib/aws-codecommit");
+import codebuild = require("aws-cdk-lib/aws-codebuild");
+import codepipeline = require("aws-cdk-lib/aws-codepipeline");
+import codepipeline_actions = require("aws-cdk-lib/aws-codepipeline-actions");
+import iam = require("aws-cdk-lib/aws-iam");
+import ecr = require("aws-cdk-lib/aws-ecr");
+import sns = require("aws-cdk-lib/aws-sns");
+import sns_subscriptions = require("aws-cdk-lib/aws-sns-subscriptions");
+import targets = require("aws-cdk-lib/aws-events-targets");
 import yaml = require('js-yaml');
 import fs = require('fs');
 
@@ -21,7 +22,7 @@ export interface EksIntegCodePipelineDeployStackProps extends cdk.StackProps {
 }
 
 export class EksIntegCodePipelineDeployStack extends cdk.Stack {
-  constructor(scope: cdk.App, id: string, props: EksIntegCodePipelineDeployStackProps) {
+  constructor(scope: Construct, id: string, props: EksIntegCodePipelineDeployStackProps) {
     super(scope, id, props);
 
     const name = 'game-2048'

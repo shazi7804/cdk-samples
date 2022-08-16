@@ -1,8 +1,9 @@
-import cdk = require('@aws-cdk/core');
-import eks = require('@aws-cdk/aws-eks');
-import ec2 = require('@aws-cdk/aws-ec2');
-import emrc = require('@aws-cdk/aws-emrcontainers');
-import iam = require('@aws-cdk/aws-iam');
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import eks = require('aws-cdk-lib/aws-eks');
+import ec2 = require('aws-cdk-lib/aws-ec2');
+import emrc = require('aws-cdk-lib/aws-emrcontainers');
+import iam = require('aws-cdk-lib/aws-iam');
 import yaml = require('js-yaml');
 import fs = require('fs');
 import { VpcProvider } from '../vpc';
@@ -16,7 +17,7 @@ export interface EksEmrContainerStackProps extends cdk.StackProps {
 }
 
 export class EksEmrContainerStack extends cdk.Stack {
-    constructor(scope: cdk.Construct, id: string, props: EksEmrContainerStackProps) {
+    constructor(scope: Construct, id: string, props: EksEmrContainerStackProps) {
         super(scope, id, props);
 
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }) || VpcProvider.createSimple(this);

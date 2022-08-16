@@ -1,6 +1,7 @@
-import cdk = require('@aws-cdk/core');
-import ec2 = require('@aws-cdk/aws-ec2');
-import iam = require('@aws-cdk/aws-iam');
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import ec2 = require('aws-cdk-lib/aws-ec2');
+import iam = require('aws-cdk-lib/aws-iam');
 import { VpcProvider } from '../vpc';
 
 
@@ -9,7 +10,7 @@ export interface ActiveDirectorySelfManagedStackProps extends cdk.StackProps {
 }
 
 export class ActiveDirectorySelfManagedStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props: ActiveDirectorySelfManagedStackProps) {
+    constructor(scope: Construct, id: string, props: ActiveDirectorySelfManagedStackProps) {
         super(scope, id, props);
 
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }) || VpcProvider.createSimple(this); 

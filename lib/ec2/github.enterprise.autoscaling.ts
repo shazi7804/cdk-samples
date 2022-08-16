@@ -1,7 +1,8 @@
-import cdk = require('@aws-cdk/core');
-import ec2 = require('@aws-cdk/aws-ec2');
-import autoscaling = require('@aws-cdk/aws-autoscaling');
-import iam = require('@aws-cdk/aws-iam');
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import ec2 = require('aws-cdk-lib/aws-ec2');
+import asg = require('aws-cdk-lib/aws-autoscaling');
+import iam = require('aws-cdk-lib/aws-iam');
 import { VpcProvider } from '../vpc';
 
 
@@ -11,7 +12,7 @@ export interface GithubEnterpriseServerStackProps extends cdk.StackProps {
 }
 
 export class GithubEnterpriseServerStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props: GithubEnterpriseServerStackProps) {
+    constructor(scope: Construct, id: string, props: GithubEnterpriseServerStackProps) {
         super(scope, id, props);
 
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }) || VpcProvider.createSimple(this); 
@@ -31,7 +32,7 @@ export class GithubEnterpriseServerStack extends cdk.Stack {
             ]
         });
 
-        const gitInstanceAsg = new autoscaling.AutoScalingGroup(this, 'GithubEntServersAsg', {
+        const gitInstanceAsg = new asg.AutoScalingGroup(this, 'GithubEntServersAsg', {
             autoScalingGroupName: 'GithubEntServers',
             vpc,
             // 14GB of memory required.
@@ -44,9 +45,8 @@ export class GithubEnterpriseServerStack extends cdk.Stack {
             blockDevices: [
                 {
                     deviceName: '/dev/xvdb',
-                    mappingEnabled: true,
                     // require second block device with at least 10GB storage to this instance
-                    volume: autoscaling.BlockDeviceVolume.ebs(10, {
+                    volume: asg.BlockDeviceVolume.ebs(10, {
                         deleteOnTermination: true,
                         encrypted: true,
                     })

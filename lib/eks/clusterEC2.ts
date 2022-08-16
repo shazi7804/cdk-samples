@@ -1,10 +1,9 @@
-import * as cdk from'@aws-cdk/core';
-import * as eks from '@aws-cdk/aws-eks';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as asg from '@aws-cdk/aws-autoscaling';
-import * as iam from '@aws-cdk/aws-iam';
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import * as eks from 'aws-cdk-lib/aws-eks';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import { VpcProvider } from '../vpc';
-import { Stack } from '@aws-cdk/core';
 
 export interface EksWithWorkerNodeStackProps extends cdk.StackProps {
     readonly cluster_version: string;
@@ -18,7 +17,7 @@ export interface EksWithWorkerNodeStackProps extends cdk.StackProps {
 }
 
 export class EksWithWorkerNodeStack extends cdk.Stack {
-    constructor(scope: cdk.Construct, id: string, props: EksWithWorkerNodeStackProps) {
+    constructor(scope: Construct, id: string, props: EksWithWorkerNodeStackProps) {
         super(scope, id, props);
 
         const vpc = ec2.Vpc.fromLookup(this, 'ExistingVPC', { vpcName: 'vpcSample/Vpc' }) || VpcProvider.createSimple(this); 
@@ -29,7 +28,7 @@ export class EksWithWorkerNodeStack extends cdk.Stack {
         
         const cluster = new eks.Cluster(this, 'Cluster', {
             vpc,
-            vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE }],
+            vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_NAT }],
             defaultCapacity: 1,
             mastersRole,
             version: eks.KubernetesVersion.of(props.cluster_version),
@@ -88,7 +87,7 @@ export class EksWithWorkerNodeStack extends cdk.Stack {
             addonVersion: props.addon_core_dns_version,
         });
 
-        new cdk.CfnOutput(this, 'Region', { value: Stack.of(this).region })
+        new cdk.CfnOutput(this, 'Region', { value: cdk.Stack.of(this).region })
         new cdk.CfnOutput(this, 'ClusterVersion', { value: props.cluster_version })
 
     }

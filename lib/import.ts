@@ -1,9 +1,10 @@
-import cdk = require('@aws-cdk/core');
-import s3 = require('@aws-cdk/aws-s3');
-import cfn_inc = require('@aws-cdk/cloudformation-include');
+import cdk = require("aws-cdk-lib");
+import { Construct } from 'constructs';
+import s3 = require('aws-cdk-lib/aws-s3');
+import cfn_inc = require('aws-cdk-lib/cloudformation-include');
 
 export class ImportResources extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props?: cdk.StageProps) {
+    constructor(scope: Construct, id: string, props?: cdk.StageProps) {
         super(scope, id, props);
 
         const existBucket = new s3.Bucket(this, 'ExistBucket', {
@@ -13,7 +14,7 @@ export class ImportResources extends cdk.Stack {
 }
 
 export class ImportCloudFormationStack extends cdk.Stack {
-    constructor(scope: cdk.App, id: string, props?: cdk.StageProps) {
+    constructor(scope: Construct, id: string, props?: cdk.StageProps) {
         super(scope, id, props);
 
         const cfnTemplate = new cfn_inc.CfnInclude(this, 'ExistCFN', { 
