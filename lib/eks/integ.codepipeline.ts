@@ -90,7 +90,7 @@ export class EksIntegCodePipelineDeployStack extends cdk.Stack {
         buildSpec: codebuild.BuildSpec.fromObject(
             yaml.load(
                 fs.readFileSync(
-                    'samples/codebuild/buildspec/deploy-eks-game2048.yml',
+                    'samples/src/kubernetes/deploy-eks-game2048.yml',
                     'utf8'
                 )
             ) as Record<string, any>[]

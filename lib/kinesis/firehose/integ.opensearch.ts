@@ -27,7 +27,7 @@ export class KinesisFirehoseDestinationOpenSearchStack extends cdk.Stack {
 
         const domain = new opensearch.Domain(this, 'domain', {
             vpc,
-            vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_NAT }],
+            vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }],
             securityGroups: [securityGroup],
             version: opensearch.EngineVersion.OPENSEARCH_1_0,
             removalPolicy: cdk.RemovalPolicy.DESTROY,

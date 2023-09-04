@@ -6,11 +6,14 @@ import { CloudTrailStack } from '../lib/cloudtrail';
 import { ApiGatewayCognitoStack } from '../lib/apiGateway';
 import { MicrosoftAdStack } from '../lib/directoryService';
 import { MultiSourceWithApprovalPipelineStack } from '../lib/codepipeline';
+import { LambdaCanaryDeployStack } from '../lib/codedeploy';
 import { CloudFrontOrginS3WithLambdaEdgeStack } from '../lib/cloudfront';
 import { SimpleDynamoDBTableStack } from '../lib/dynamodb';
+import { SimpleAuroraMySQLClusterStack } from '../lib/rds';
 import { DataLakeCore,
          TransferFamilyServerStack,
-         S3ObjectLambdaUppercaseStack } from '../lib/s3';
+         S3ObjectLambdaUppercaseStack,
+         SensitiveDataPurgeStack } from '../lib/s3';
 import { KinesisFirehoseDestinationOpenSearchStack } from '../lib/kinesis';
 import { Ec2StressHttpAutoscalingGroupStack,
          Ec2WindowsWebJoinDomainAutoscalingGroupStack,
@@ -26,6 +29,7 @@ import { VpcSimpleCreate,
          TransitGatewayStack } from '../lib/vpc';
 import { BlockchainCore } from '../lib/blockchain'
 import { TerraformBackendStack } from '../lib/terraform';
+import { CustomEventBusStack } from '../lib/events'
 
 const app = new cdk.App();
 
@@ -53,17 +57,21 @@ new VpcClienVpnStack(app, 'VpcClienVpnStack', {
 })
 new TransitGatewayStack(app, 'TransitGatewayStack', { env });
 
+// Database
+new SimpleAuroraMySQLClusterStack(app, 'SimpleAuroraMySQLClusterStack', { env })
+
 // Applications
 new ApiGatewayCognitoStack(app, 'ApiGatewayCognitoStack', { env });
 
 new MicrosoftAdStack(app, 'MicrosoftAdStack', { env });
 
 // AWS CloudFront
-new CloudFrontOrginS3WithLambdaEdgeStack(app, 'CloudFrontOrginS3Core', { env })
+new CloudFrontOrginS3WithLambdaEdgeStack(app, 'CloudFrontOrginS3WithLambdaEdgeStack', { env })
 
 // S3, Transfer Family
 new TransferFamilyServerStack(app, 'TransferFamilyServerCore', { env });
 new S3ObjectLambdaUppercaseStack(app, 'S3ObjectLambdaUppercaseStack', { env });
+new SensitiveDataPurgeStack(app, 'SensitiveDataPurgeStack', { env })
 
 // new DataLakeCore(app, 'DataLakeCore', {
 //     env,
@@ -79,8 +87,10 @@ new GithubEnterpriseServerStack(app, 'GithubEnterpriseServerStack', { env,
     keypair_name: app.node.tryGetContext('keypair_name'),
 })
 
-// CodePipeline
+// Deployment
 new MultiSourceWithApprovalPipelineStack(app, 'MultiSourceWithApprovalPipelineStack', { env });
+new LambdaCanaryDeployStack(app, 'LambdaCanaryDeployStack');
+new CustomEventBusStack(app, 'ChangeCalendarIntegrateEventStack', { env });
 
 // Instances
 new Ec2StressHttpAutoscalingGroupStack(app, 'Ec2StressHttpAutoscalingGroupStack', { env })

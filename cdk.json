@@ -1,6 +1,6 @@
 {
   "app": "npx ts-node bin/cdk.ts",
-  "plugin": ["cdk-assume-role-credential-plugin"],
+  "plugin": [],
   "context": {
     "myip": "1.34.185.2/32",
     "keypair_name": "scottliao",

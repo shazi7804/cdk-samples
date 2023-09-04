@@ -21,16 +21,17 @@
     "ts-node": "^9.0.0"
   },
   "dependencies": {
-    "aws-cdk-lib": "2.37.1",
-    "@aws-cdk/aws-apigatewayv2-alpha": "2.37.1-alpha.0",
-    "@aws-cdk/aws-kinesisfirehose-destinations-alpha": "2.37.1-alpha.0",
-    "constructs": "^10.0.0",
+    "aws-cdk-lib": "2.89.0",
+    "@aws-cdk/aws-apigatewayv2-alpha": "2.89.0-alpha.0",
+    "@aws-cdk/aws-kinesisfirehose-destinations-alpha": "2.89.0-alpha.0",
+    "cdk-assume-role-credential-plugin": "1.4.0",
+    "constructs": "^10.2.69",
     "@types/js-yaml": "^4.0.1",
-    "@types/node": "10.17.27",
+    "@types/node": "20.4.6",
     "base36": "^1.0.0",
     "hasha": "^5.2.2",
     "js-yaml": "^4.0.1",
     "simple-base": "^1.0.0",
-    "typescript": "~3.9.7"
+    "typescript": "~5.1.6"
   }
 }

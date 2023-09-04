@@ -26,7 +26,7 @@ export class EksWithFargateStack extends cdk.Stack {
         const cluster = new eks.Cluster(this, 'eks-fargate-cluster', {
             clusterName: 'eks-fargate',
             vpc,
-            vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_NAT }],
+            vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }],
             mastersRole,
             defaultCapacity: 0,
             version: eks.KubernetesVersion.V1_21,
@@ -37,7 +37,7 @@ export class EksWithFargateStack extends cdk.Stack {
                 { namespace: "kube-system"},
                 { namespace: "default"}
             ],
-            subnetSelection: { subnetType: ec2.SubnetType.PRIVATE_WITH_NAT },
+            subnetSelection: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
             vpc,
             podExecutionRole
         });

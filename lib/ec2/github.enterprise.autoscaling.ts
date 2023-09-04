@@ -40,7 +40,7 @@ export class GithubEnterpriseServerStack extends cdk.Stack {
             machineImage: ami,
             minCapacity: 1,
             maxCapacity: 1,
-            vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_NAT },
+            vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
             keyName: props.keypair_name,
             blockDevices: [
                 {

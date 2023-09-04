@@ -31,7 +31,7 @@ export class EksEmrContainerStack extends cdk.Stack {
         const cluster = new eks.Cluster(this, 'EksCluster', {
             clusterName: 'emr-spark-containers',
             vpc,
-            vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_NAT }],
+            vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }],
             mastersRole,
             defaultCapacity: 0,
             version: eks.KubernetesVersion.V1_21,
@@ -43,7 +43,7 @@ export class EksEmrContainerStack extends cdk.Stack {
                 { namespace: "default"},
                 { namespace: props.namespace}
             ],
-            subnetSelection: { subnetType: ec2.SubnetType.PRIVATE_WITH_NAT },
+            subnetSelection: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
             vpc,
             podExecutionRole
         });

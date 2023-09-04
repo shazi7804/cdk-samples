@@ -28,7 +28,7 @@ export class EksWithWorkerNodeStack extends cdk.Stack {
         
         const cluster = new eks.Cluster(this, 'Cluster', {
             vpc,
-            vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_NAT }],
+            vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }],
             defaultCapacity: 1,
             mastersRole,
             version: eks.KubernetesVersion.of(props.cluster_version),

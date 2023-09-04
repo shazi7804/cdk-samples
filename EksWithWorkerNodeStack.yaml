@@ -1,0 +1,1059 @@
+Resources:
+  AdminRole38563C57:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::381354187112:root
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/AdminRole/Resource
+  ClusterRoleFA261979:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: eks.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEKSClusterPolicy
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/Role/Resource
+  ClusterControlPlaneSecurityGroupD274242C:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: EKS Control Plane Security Group
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      VpcId: vpc-05c3438e678ec0b90
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/ControlPlaneSecurityGroup/Resource
+  ClusterControlPlaneSecurityGroupfromEksWithWorkerNodeStackClusterspotworkernodeInstanceSecurityGroup7083165C443F0E5C13A:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: from EksWithWorkerNodeStackClusterspotworkernodeInstanceSecurityGroup7083165C:443
+      FromPort: 443
+      GroupId:
+        Fn::GetAtt:
+          - ClusterControlPlaneSecurityGroupD274242C
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - ClusterspotworkernodeInstanceSecurityGroup026B6B42
+          - GroupId
+      ToPort: 443
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/ControlPlaneSecurityGroup/from EksWithWorkerNodeStackClusterspotworkernodeInstanceSecurityGroup7083165C:443
+  ClusterControlPlaneSecurityGroupfromEksWithWorkerNodeStackClusterdemandworkernodeInstanceSecurityGroup64335B804431F3458FE:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: from EksWithWorkerNodeStackClusterdemandworkernodeInstanceSecurityGroup64335B80:443
+      FromPort: 443
+      GroupId:
+        Fn::GetAtt:
+          - ClusterControlPlaneSecurityGroupD274242C
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - ClusterdemandworkernodeInstanceSecurityGroup730A1223
+          - GroupId
+      ToPort: 443
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/ControlPlaneSecurityGroup/from EksWithWorkerNodeStackClusterdemandworkernodeInstanceSecurityGroup64335B80:443
+  ClusterCreationRole360249B6:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - :iam::381354187112:root
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/Resource/CreationRole/Resource
+  ClusterCreationRoleDefaultPolicyE8BDFC7B:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: iam:PassRole
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ClusterRoleFA261979
+                - Arn
+          - Action:
+              - eks:CreateCluster
+              - eks:DescribeCluster
+              - eks:DescribeUpdate
+              - eks:DeleteCluster
+              - eks:UpdateClusterVersion
+              - eks:UpdateClusterConfig
+              - eks:CreateFargateProfile
+              - eks:TagResource
+              - eks:UntagResource
+            Effect: Allow
+            Resource:
+              - "*"
+          - Action:
+              - eks:DescribeFargateProfile
+              - eks:DeleteFargateProfile
+            Effect: Allow
+            Resource: "*"
+          - Action:
+              - iam:GetRole
+              - iam:listAttachedRolePolicies
+            Effect: Allow
+            Resource: "*"
+          - Action: iam:CreateServiceLinkedRole
+            Effect: Allow
+            Resource: "*"
+          - Action:
+              - ec2:DescribeInstances
+              - ec2:DescribeNetworkInterfaces
+              - ec2:DescribeSecurityGroups
+              - ec2:DescribeSubnets
+              - ec2:DescribeRouteTables
+              - ec2:DescribeDhcpOptions
+              - ec2:DescribeVpcs
+            Effect: Allow
+            Resource: "*"
+        Version: "2012-10-17"
+      PolicyName: ClusterCreationRoleDefaultPolicyE8BDFC7B
+      Roles:
+        - Ref: ClusterCreationRole360249B6
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/Resource/CreationRole/DefaultPolicy/Resource
+  Cluster9EE0221C:
+    Type: Custom::AWSCDK-EKS-Cluster
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - awscdkawseksClusterResourceProviderNestedStackawscdkawseksClusterResourceProviderNestedStackResource9827C454
+          - Outputs.EksWithWorkerNodeStackawscdkawseksClusterResourceProviderframeworkonEventFF2291EDArn
+      Config:
+        version: "1.21"
+        roleArn:
+          Fn::GetAtt:
+            - ClusterRoleFA261979
+            - Arn
+        resourcesVpcConfig:
+          subnetIds:
+            - subnet-0896f365fa69d1567
+            - subnet-0d819942dd780c93c
+            - subnet-0f179555c54ca871e
+            - subnet-0b5d5f4ceff9378a9
+          securityGroupIds:
+            - Fn::GetAtt:
+                - ClusterControlPlaneSecurityGroupD274242C
+                - GroupId
+          endpointPublicAccess: false
+          endpointPrivateAccess: true
+      AssumeRoleArn:
+        Fn::GetAtt:
+          - ClusterCreationRole360249B6
+          - Arn
+      AttributesRevision: 2
+    DependsOn:
+      - ClusterCreationRoleDefaultPolicyE8BDFC7B
+      - ClusterCreationRole360249B6
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/Resource/Resource/Default
+  ClusterKubectlReadyBarrier200052AF:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Value: aws:cdk:eks:kubectl-ready
+    DependsOn:
+      - ClusterCreationRoleDefaultPolicyE8BDFC7B
+      - ClusterCreationRole360249B6
+      - Cluster9EE0221C
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/KubectlReadyBarrier
+  ClusterClusterSecurityGroupfromEksWithWorkerNodeStackClusterspotworkernodeInstanceSecurityGroup7083165C44343B9E81A:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: from EksWithWorkerNodeStackClusterspotworkernodeInstanceSecurityGroup7083165C:443
+      FromPort: 443
+      GroupId:
+        Fn::GetAtt:
+          - Cluster9EE0221C
+          - ClusterSecurityGroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - ClusterspotworkernodeInstanceSecurityGroup026B6B42
+          - GroupId
+      ToPort: 443
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/ClusterSecurityGroup/from EksWithWorkerNodeStackClusterspotworkernodeInstanceSecurityGroup7083165C:443
+  ClusterClusterSecurityGroupfromEksWithWorkerNodeStackClusterdemandworkernodeInstanceSecurityGroup64335B8044332E44A27:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: from EksWithWorkerNodeStackClusterdemandworkernodeInstanceSecurityGroup64335B80:443
+      FromPort: 443
+      GroupId:
+        Fn::GetAtt:
+          - Cluster9EE0221C
+          - ClusterSecurityGroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - ClusterdemandworkernodeInstanceSecurityGroup730A1223
+          - GroupId
+      ToPort: 443
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/ClusterSecurityGroup/from EksWithWorkerNodeStackClusterdemandworkernodeInstanceSecurityGroup64335B80:443
+  ClusterAwsAuthmanifestFE51F8AE:
+    Type: Custom::AWSCDK-EKS-KubernetesResource
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - awscdkawseksKubectlProviderNestedStackawscdkawseksKubectlProviderNestedStackResourceA7AEBA6B
+          - Outputs.EksWithWorkerNodeStackawscdkawseksKubectlProviderframeworkonEvent14D3E104Arn
+      Manifest:
+        Fn::Join:
+          - ""
+          - - '[{"apiVersion":"v1","kind":"ConfigMap","metadata":{"name":"aws-auth","namespace":"kube-system","labels":{"aws.cdk.eks/prune-c86149332b20d8f9ce5b563ada2fbf830ec93271a5":""}},"data":{"mapRoles":"[{\"rolearn\":\"'
+            - Fn::GetAtt:
+                - AdminRole38563C57
+                - Arn
+            - \",\"username\":\"
+            - Fn::GetAtt:
+                - AdminRole38563C57
+                - Arn
+            - \",\"groups\":[\"system:masters\"]},{\"rolearn\":\"
+            - Fn::GetAtt:
+                - ClusterNodegroupDefaultCapacityNodeGroupRole55953B04
+                - Arn
+            - \",\"username\":\"system:node:{{EC2PrivateDNSName}}\",\"groups\":[\"system:bootstrappers\",\"system:nodes\"]},{\"rolearn\":\"
+            - Fn::GetAtt:
+                - ClusterspotworkernodeInstanceRoleF2DDAE4B
+                - Arn
+            - \",\"username\":\"system:node:{{EC2PrivateDNSName}}\",\"groups\":[\"system:bootstrappers\",\"system:nodes\"]},{\"rolearn\":\"
+            - Fn::GetAtt:
+                - ClusterdemandworkernodeInstanceRole34B4DA74
+                - Arn
+            - \",\"username\":\"system:node:{{EC2PrivateDNSName}}\",\"groups\":[\"system:bootstrappers\",\"system:nodes\"]}]","mapUsers":"[]","mapAccounts":"[]"}}]
+      ClusterName:
+        Ref: Cluster9EE0221C
+      RoleArn:
+        Fn::GetAtt:
+          - ClusterCreationRole360249B6
+          - Arn
+      PruneLabel: aws.cdk.eks/prune-c86149332b20d8f9ce5b563ada2fbf830ec93271a5
+      Overwrite: true
+    DependsOn:
+      - ClusterKubectlReadyBarrier200052AF
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/AwsAuth/manifest/Resource/Default
+  ClusterNodegroupDefaultCapacityNodeGroupRole55953B04:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEKS_CNI_Policy
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/NodegroupDefaultCapacity/NodeGroupRole/Resource
+  ClusterNodegroupDefaultCapacityDA0920A3:
+    Type: AWS::EKS::Nodegroup
+    Properties:
+      ClusterName:
+        Ref: Cluster9EE0221C
+      NodeRole:
+        Fn::GetAtt:
+          - ClusterNodegroupDefaultCapacityNodeGroupRole55953B04
+          - Arn
+      Subnets:
+        - subnet-0896f365fa69d1567
+        - subnet-0d819942dd780c93c
+        - subnet-0f179555c54ca871e
+        - subnet-0b5d5f4ceff9378a9
+      AmiType: AL2_x86_64
+      ForceUpdateEnabled: true
+      InstanceTypes:
+        - m5.large
+      ScalingConfig:
+        DesiredSize: 1
+        MaxSize: 1
+        MinSize: 1
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/NodegroupDefaultCapacity/Resource
+  ClusterspotworkernodeInstanceSecurityGroup026B6B42:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: EksWithWorkerNodeStack/Cluster/spot-worker-node/InstanceSecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      Tags:
+        - Key: Name
+          Value: EksWithWorkerNodeStack/Cluster/spot-worker-node
+      VpcId: vpc-05c3438e678ec0b90
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/spot-worker-node/InstanceSecurityGroup/Resource
+  ClusterspotworkernodeInstanceSecurityGroupfromEksWithWorkerNodeStackClusterspotworkernodeInstanceSecurityGroup7083165CALLTRAFFICBF83E744:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: "-1"
+      Description: from EksWithWorkerNodeStackClusterspotworkernodeInstanceSecurityGroup7083165C:ALL TRAFFIC
+      GroupId:
+        Fn::GetAtt:
+          - ClusterspotworkernodeInstanceSecurityGroup026B6B42
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - ClusterspotworkernodeInstanceSecurityGroup026B6B42
+          - GroupId
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/spot-worker-node/InstanceSecurityGroup/from EksWithWorkerNodeStackClusterspotworkernodeInstanceSecurityGroup7083165C:ALL TRAFFIC
+  ClusterspotworkernodeInstanceSecurityGroupfromEksWithWorkerNodeStackClusterClusterSecurityGroup21672DB6443CC18B2C7:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: from EksWithWorkerNodeStackClusterClusterSecurityGroup21672DB6:443
+      FromPort: 443
+      GroupId:
+        Fn::GetAtt:
+          - ClusterspotworkernodeInstanceSecurityGroup026B6B42
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - Cluster9EE0221C
+          - ClusterSecurityGroupId
+      ToPort: 443
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/spot-worker-node/InstanceSecurityGroup/from EksWithWorkerNodeStackClusterClusterSecurityGroup21672DB6:443
+  ClusterspotworkernodeInstanceSecurityGroupfromEksWithWorkerNodeStackClusterControlPlaneSecurityGroupBDB1C37D443EC32C193:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: from EksWithWorkerNodeStackClusterControlPlaneSecurityGroupBDB1C37D:443
+      FromPort: 443
+      GroupId:
+        Fn::GetAtt:
+          - ClusterspotworkernodeInstanceSecurityGroup026B6B42
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - ClusterControlPlaneSecurityGroupD274242C
+          - GroupId
+      ToPort: 443
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/spot-worker-node/InstanceSecurityGroup/from EksWithWorkerNodeStackClusterControlPlaneSecurityGroupBDB1C37D:443
+  ClusterspotworkernodeInstanceSecurityGroupfromEksWithWorkerNodeStackClusterClusterSecurityGroup21672DB6102565535F5964CDC:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: from EksWithWorkerNodeStackClusterClusterSecurityGroup21672DB6:1025-65535
+      FromPort: 1025
+      GroupId:
+        Fn::GetAtt:
+          - ClusterspotworkernodeInstanceSecurityGroup026B6B42
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - Cluster9EE0221C
+          - ClusterSecurityGroupId
+      ToPort: 65535
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/spot-worker-node/InstanceSecurityGroup/from EksWithWorkerNodeStackClusterClusterSecurityGroup21672DB6:1025-65535
+  ClusterspotworkernodeInstanceSecurityGroupfromEksWithWorkerNodeStackClusterControlPlaneSecurityGroupBDB1C37D102565535C6EEC079:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: from EksWithWorkerNodeStackClusterControlPlaneSecurityGroupBDB1C37D:1025-65535
+      FromPort: 1025
+      GroupId:
+        Fn::GetAtt:
+          - ClusterspotworkernodeInstanceSecurityGroup026B6B42
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - ClusterControlPlaneSecurityGroupD274242C
+          - GroupId
+      ToPort: 65535
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/spot-worker-node/InstanceSecurityGroup/from EksWithWorkerNodeStackClusterControlPlaneSecurityGroupBDB1C37D:1025-65535
+  ClusterspotworkernodeInstanceRoleF2DDAE4B:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEKS_CNI_Policy
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+        - Key:
+            Fn::Join:
+              - ""
+              - - kubernetes.io/cluster/
+                - Ref: Cluster9EE0221C
+          Value: owned
+        - Key: Name
+          Value: EksWithWorkerNodeStack/Cluster/spot-worker-node
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/spot-worker-node/InstanceRole/Resource
+  ClusterspotworkernodeInstanceProfileE27B9064:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - Ref: ClusterspotworkernodeInstanceRoleF2DDAE4B
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/spot-worker-node/InstanceProfile
+  ClusterspotworkernodeLaunchConfigD06B5F75:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      ImageId:
+        Ref: SsmParameterValueawsserviceeksoptimizedami121amazonlinux2recommendedimageidC96584B6F00A464EAD1953AFF4B05118Parameter
+      InstanceType: m5.large
+      IamInstanceProfile:
+        Ref: ClusterspotworkernodeInstanceProfileE27B9064
+      SecurityGroups:
+        - Fn::GetAtt:
+            - ClusterspotworkernodeInstanceSecurityGroup026B6B42
+            - GroupId
+        - Fn::GetAtt:
+            - Cluster9EE0221C
+            - ClusterSecurityGroupId
+      SpotPrice: "0.1"
+      UserData:
+        Fn::Base64:
+          Fn::Join:
+            - ""
+            - - |-
+                #!/bin/bash
+                set -o xtrace
+                /etc/eks/bootstrap.sh 
+              - Ref: Cluster9EE0221C
+              - " --kubelet-extra-args \"--node-labels lifecycle=Ec2Spot --register-with-taints=spotInstance=true:PreferNoSchedule\" --apiserver-endpoint '"
+              - Fn::GetAtt:
+                  - Cluster9EE0221C
+                  - Endpoint
+              - "' --b64-cluster-ca '"
+              - Fn::GetAtt:
+                  - Cluster9EE0221C
+                  - CertificateAuthorityData
+              - |-
+                ' --use-max-pods true
+                /opt/aws/bin/cfn-signal --exit-code $? --stack EksWithWorkerNodeStack --resource ClusterspotworkernodeASG29D5FFC6 --region us-east-1
+    DependsOn:
+      - ClusterspotworkernodeInstanceRoleF2DDAE4B
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/spot-worker-node/LaunchConfig
+  ClusterspotworkernodeASG29D5FFC6:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      MaxSize: "1"
+      MinSize: "1"
+      LaunchConfigurationName:
+        Ref: ClusterspotworkernodeLaunchConfigD06B5F75
+      MaxInstanceLifetime: 604800
+      Tags:
+        - Key:
+            Fn::Join:
+              - ""
+              - - kubernetes.io/cluster/
+                - Ref: Cluster9EE0221C
+          PropagateAtLaunch: true
+          Value: owned
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: EksWithWorkerNodeStack/Cluster/spot-worker-node
+      VPCZoneIdentifier:
+        - subnet-081f458ba68bee286
+        - subnet-0259b069f6ba12c1d
+    UpdatePolicy:
+      AutoScalingScheduledAction:
+        IgnoreUnmodifiedGroupSizeProperties: true
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/spot-worker-node/ASG
+  Clusterchartspotinterrupthandler79E2D768:
+    Type: Custom::AWSCDK-EKS-HelmChart
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - awscdkawseksKubectlProviderNestedStackawscdkawseksKubectlProviderNestedStackResourceA7AEBA6B
+          - Outputs.EksWithWorkerNodeStackawscdkawseksKubectlProviderframeworkonEvent14D3E104Arn
+      ClusterName:
+        Ref: Cluster9EE0221C
+      RoleArn:
+        Fn::GetAtt:
+          - ClusterCreationRole360249B6
+          - Arn
+      Release: rkernodestackclusterchartspotinterrupthandler7a694b1d
+      Chart: aws-node-termination-handler
+      Version: 0.18.0
+      Values: '{"nodeSelector":{"lifecycle":"Ec2Spot"}}'
+      Namespace: kube-system
+      Repository: https://aws.github.io/eks-charts
+      CreateNamespace: true
+    DependsOn:
+      - ClusterKubectlReadyBarrier200052AF
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/chart-spot-interrupt-handler/Resource/Default
+  ClusterdemandworkernodeInstanceSecurityGroup730A1223:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: EksWithWorkerNodeStack/Cluster/demand-worker-node/InstanceSecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      Tags:
+        - Key: Name
+          Value: EksWithWorkerNodeStack/Cluster/demand-worker-node
+      VpcId: vpc-05c3438e678ec0b90
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/demand-worker-node/InstanceSecurityGroup/Resource
+  ClusterdemandworkernodeInstanceSecurityGroupfromEksWithWorkerNodeStackClusterdemandworkernodeInstanceSecurityGroup64335B80ALLTRAFFICB5B09AB1:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: "-1"
+      Description: from EksWithWorkerNodeStackClusterdemandworkernodeInstanceSecurityGroup64335B80:ALL TRAFFIC
+      GroupId:
+        Fn::GetAtt:
+          - ClusterdemandworkernodeInstanceSecurityGroup730A1223
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - ClusterdemandworkernodeInstanceSecurityGroup730A1223
+          - GroupId
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/demand-worker-node/InstanceSecurityGroup/from EksWithWorkerNodeStackClusterdemandworkernodeInstanceSecurityGroup64335B80:ALL TRAFFIC
+  ClusterdemandworkernodeInstanceSecurityGroupfromEksWithWorkerNodeStackClusterClusterSecurityGroup21672DB6443ABF81684:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: from EksWithWorkerNodeStackClusterClusterSecurityGroup21672DB6:443
+      FromPort: 443
+      GroupId:
+        Fn::GetAtt:
+          - ClusterdemandworkernodeInstanceSecurityGroup730A1223
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - Cluster9EE0221C
+          - ClusterSecurityGroupId
+      ToPort: 443
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/demand-worker-node/InstanceSecurityGroup/from EksWithWorkerNodeStackClusterClusterSecurityGroup21672DB6:443
+  ClusterdemandworkernodeInstanceSecurityGroupfromEksWithWorkerNodeStackClusterControlPlaneSecurityGroupBDB1C37D44372AD477B:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: from EksWithWorkerNodeStackClusterControlPlaneSecurityGroupBDB1C37D:443
+      FromPort: 443
+      GroupId:
+        Fn::GetAtt:
+          - ClusterdemandworkernodeInstanceSecurityGroup730A1223
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - ClusterControlPlaneSecurityGroupD274242C
+          - GroupId
+      ToPort: 443
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/demand-worker-node/InstanceSecurityGroup/from EksWithWorkerNodeStackClusterControlPlaneSecurityGroupBDB1C37D:443
+  ClusterdemandworkernodeInstanceSecurityGroupfromEksWithWorkerNodeStackClusterClusterSecurityGroup21672DB61025655359C421628:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: from EksWithWorkerNodeStackClusterClusterSecurityGroup21672DB6:1025-65535
+      FromPort: 1025
+      GroupId:
+        Fn::GetAtt:
+          - ClusterdemandworkernodeInstanceSecurityGroup730A1223
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - Cluster9EE0221C
+          - ClusterSecurityGroupId
+      ToPort: 65535
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/demand-worker-node/InstanceSecurityGroup/from EksWithWorkerNodeStackClusterClusterSecurityGroup21672DB6:1025-65535
+  ClusterdemandworkernodeInstanceSecurityGroupfromEksWithWorkerNodeStackClusterControlPlaneSecurityGroupBDB1C37D102565535BB3D9AE8:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: from EksWithWorkerNodeStackClusterControlPlaneSecurityGroupBDB1C37D:1025-65535
+      FromPort: 1025
+      GroupId:
+        Fn::GetAtt:
+          - ClusterdemandworkernodeInstanceSecurityGroup730A1223
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - ClusterControlPlaneSecurityGroupD274242C
+          - GroupId
+      ToPort: 65535
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/demand-worker-node/InstanceSecurityGroup/from EksWithWorkerNodeStackClusterControlPlaneSecurityGroupBDB1C37D:1025-65535
+  ClusterdemandworkernodeInstanceRole34B4DA74:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEKS_CNI_Policy
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+        - Key:
+            Fn::Join:
+              - ""
+              - - kubernetes.io/cluster/
+                - Ref: Cluster9EE0221C
+          Value: owned
+        - Key: Name
+          Value: EksWithWorkerNodeStack/Cluster/demand-worker-node
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/demand-worker-node/InstanceRole/Resource
+  ClusterdemandworkernodeInstanceProfile0DA25060:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - Ref: ClusterdemandworkernodeInstanceRole34B4DA74
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/demand-worker-node/InstanceProfile
+  ClusterdemandworkernodeLaunchConfig2735E92F:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      ImageId:
+        Ref: SsmParameterValueawsserviceeksoptimizedami121amazonlinux2recommendedimageidC96584B6F00A464EAD1953AFF4B05118Parameter
+      InstanceType: m5.large
+      IamInstanceProfile:
+        Ref: ClusterdemandworkernodeInstanceProfile0DA25060
+      SecurityGroups:
+        - Fn::GetAtt:
+            - ClusterdemandworkernodeInstanceSecurityGroup730A1223
+            - GroupId
+        - Fn::GetAtt:
+            - Cluster9EE0221C
+            - ClusterSecurityGroupId
+      UserData:
+        Fn::Base64:
+          Fn::Join:
+            - ""
+            - - |-
+                #!/bin/bash
+                set -o xtrace
+                /etc/eks/bootstrap.sh 
+              - Ref: Cluster9EE0221C
+              - " --kubelet-extra-args \"--node-labels lifecycle=OnDemand\" --apiserver-endpoint '"
+              - Fn::GetAtt:
+                  - Cluster9EE0221C
+                  - Endpoint
+              - "' --b64-cluster-ca '"
+              - Fn::GetAtt:
+                  - Cluster9EE0221C
+                  - CertificateAuthorityData
+              - |-
+                ' --use-max-pods true
+                /opt/aws/bin/cfn-signal --exit-code $? --stack EksWithWorkerNodeStack --resource ClusterdemandworkernodeASG4DA08895 --region us-east-1
+    DependsOn:
+      - ClusterdemandworkernodeInstanceRole34B4DA74
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/demand-worker-node/LaunchConfig
+  ClusterdemandworkernodeASG4DA08895:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      MaxSize: "1"
+      MinSize: "1"
+      LaunchConfigurationName:
+        Ref: ClusterdemandworkernodeLaunchConfig2735E92F
+      MaxInstanceLifetime: 604800
+      Tags:
+        - Key:
+            Fn::Join:
+              - ""
+              - - kubernetes.io/cluster/
+                - Ref: Cluster9EE0221C
+          PropagateAtLaunch: true
+          Value: owned
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: EksWithWorkerNodeStack/Cluster/demand-worker-node
+      VPCZoneIdentifier:
+        - subnet-0896f365fa69d1567
+        - subnet-0d819942dd780c93c
+        - subnet-0f179555c54ca871e
+        - subnet-0b5d5f4ceff9378a9
+    UpdatePolicy:
+      AutoScalingScheduledAction:
+        IgnoreUnmodifiedGroupSizeProperties: true
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/demand-worker-node/ASG
+  ClusterOpenIdConnectProviderE7EB0530:
+    Type: Custom::AWSCDKOpenIdConnectProvider
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - CustomAWSCDKOpenIdConnectProviderCustomResourceProviderHandlerF2C543E0
+          - Arn
+      ClientIDList:
+        - sts.amazonaws.com
+      ThumbprintList:
+        - 9e99a48a9960b14926bb7f3b02e22da2b0ab7280
+      Url:
+        Fn::GetAtt:
+          - Cluster9EE0221C
+          - OpenIdConnectIssuerUrl
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Cluster/OpenIdConnectProvider/Resource/Default
+  awscdkawseksClusterResourceProviderNestedStackawscdkawseksClusterResourceProviderNestedStackResource9827C454:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL:
+        Fn::Join:
+          - ""
+          - - https://s3.us-east-1.
+            - Ref: AWS::URLSuffix
+            - /cdk-hnb659fds-assets-381354187112-us-east-1/f6a36a84fb4982200165b898a8351e6b69899024cdf175f0f0864d1a99ed57fc.json
+      Parameters:
+        referencetoEksWithWorkerNodeStackClusterCreationRoleEE9D65F5Arn:
+          Fn::GetAtt:
+            - ClusterCreationRole360249B6
+            - Arn
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/@aws-cdk--aws-eks.ClusterResourceProvider.NestedStack/@aws-cdk--aws-eks.ClusterResourceProvider.NestedStackResource
+      aws:asset:path: EksWithWorkerNodeStackawscdkawseksClusterResourceProviderF73056BF.nested.template.json
+      aws:asset:property: TemplateURL
+  awscdkawseksKubectlProviderNestedStackawscdkawseksKubectlProviderNestedStackResourceA7AEBA6B:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL:
+        Fn::Join:
+          - ""
+          - - https://s3.us-east-1.
+            - Ref: AWS::URLSuffix
+            - /cdk-hnb659fds-assets-381354187112-us-east-1/6640b450111a9fd1977577a863b759526dafe2e10275aee43c8061edc732c05c.json
+      Parameters:
+        referencetoEksWithWorkerNodeStackCluster914FA909Arn:
+          Fn::GetAtt:
+            - Cluster9EE0221C
+            - Arn
+        referencetoEksWithWorkerNodeStackClusterCreationRoleEE9D65F5Arn:
+          Fn::GetAtt:
+            - ClusterCreationRole360249B6
+            - Arn
+        referencetoEksWithWorkerNodeStackCluster914FA909ClusterSecurityGroupId:
+          Fn::GetAtt:
+            - Cluster9EE0221C
+            - ClusterSecurityGroupId
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/@aws-cdk--aws-eks.KubectlProvider.NestedStack/@aws-cdk--aws-eks.KubectlProvider.NestedStackResource
+      aws:asset:path: EksWithWorkerNodeStackawscdkawseksKubectlProvider7BAD4034.nested.template.json
+      aws:asset:property: TemplateURL
+  CustomAWSCDKOpenIdConnectProviderCustomResourceProviderRole517FED65:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+      ManagedPolicyArns:
+        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: Inline
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Resource: "*"
+                Action:
+                  - iam:CreateOpenIDConnectProvider
+                  - iam:DeleteOpenIDConnectProvider
+                  - iam:UpdateOpenIDConnectProviderThumbprint
+                  - iam:AddClientIDToOpenIDConnectProvider
+                  - iam:RemoveClientIDFromOpenIDConnectProvider
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Role
+  CustomAWSCDKOpenIdConnectProviderCustomResourceProviderHandlerF2C543E0:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: cdk-hnb659fds-assets-381354187112-us-east-1
+        S3Key: 494e82802f093e633e580188c7937aef9d6ee0ad4a788d58c647e6bea26d2915.zip
+      Timeout: 900
+      MemorySize: 128
+      Handler: __entrypoint__.handler
+      Role:
+        Fn::GetAtt:
+          - CustomAWSCDKOpenIdConnectProviderCustomResourceProviderRole517FED65
+          - Arn
+      Runtime: nodejs14.x
+    DependsOn:
+      - CustomAWSCDKOpenIdConnectProviderCustomResourceProviderRole517FED65
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Handler
+      aws:asset:path: asset.494e82802f093e633e580188c7937aef9d6ee0ad4a788d58c647e6bea26d2915
+      aws:asset:property: Code
+  awsnodetrustpolicy83070BC0:
+    Type: Custom::AWSCDKCfnJson
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - AWSCDKCfnUtilsProviderCustomResourceProviderHandlerCF82AA57
+          - Arn
+      Value:
+        Fn::Join:
+          - ""
+          - - '{"'
+            - Fn::Select:
+                - 1
+                - Fn::Split:
+                    - :oidc-provider/
+                    - Ref: ClusterOpenIdConnectProviderE7EB0530
+            - :aud":"sts.amazonaws.com","
+            - Fn::Select:
+                - 1
+                - Fn::Split:
+                    - :oidc-provider/
+                    - Ref: ClusterOpenIdConnectProviderE7EB0530
+            - :sub":"system:serviceaccount:kube-system:aws-node"}
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/aws-node-trust-policy/Resource/Default
+  AWSCDKCfnUtilsProviderCustomResourceProviderRoleFE0EE867:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+      ManagedPolicyArns:
+        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/AWSCDKCfnUtilsProviderCustomResourceProvider/Role
+  AWSCDKCfnUtilsProviderCustomResourceProviderHandlerCF82AA57:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: cdk-hnb659fds-assets-381354187112-us-east-1
+        S3Key: a97987a1729ad440a42cac8aa979b932696afb2dc47dec373aad1a333a1cdbfc.zip
+      Timeout: 900
+      MemorySize: 128
+      Handler: __entrypoint__.handler
+      Role:
+        Fn::GetAtt:
+          - AWSCDKCfnUtilsProviderCustomResourceProviderRoleFE0EE867
+          - Arn
+      Runtime: nodejs14.x
+    DependsOn:
+      - AWSCDKCfnUtilsProviderCustomResourceProviderRoleFE0EE867
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/AWSCDKCfnUtilsProviderCustomResourceProvider/Handler
+      aws:asset:path: asset.a97987a1729ad440a42cac8aa979b932696afb2dc47dec373aad1a333a1cdbfc
+      aws:asset:property: Code
+  awsnoderole29F9B05C:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                Fn::GetAtt:
+                  - awsnodetrustpolicy83070BC0
+                  - Value
+            Effect: Allow
+            Principal:
+              Federated:
+                Ref: ClusterOpenIdConnectProviderE7EB0530
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/AmazonEKS_CNI_Policy
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/aws-node-role/Resource
+  vpccni:
+    Type: AWS::EKS::Addon
+    Properties:
+      AddonName: vpc-cni
+      ClusterName:
+        Ref: Cluster9EE0221C
+      AddonVersion: v1.9.1-eksbuild.1
+      ResolveConflicts: OVERWRITE
+      ServiceAccountRoleArn:
+        Fn::GetAtt:
+          - awsnoderole29F9B05C
+          - Arn
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/vpc-cni
+  kubeproxy:
+    Type: AWS::EKS::Addon
+    Properties:
+      AddonName: kube-proxy
+      ClusterName:
+        Ref: Cluster9EE0221C
+      AddonVersion: v1.21.2-eksbuild.2
+      ResolveConflicts: OVERWRITE
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/kube-proxy
+  coredns:
+    Type: AWS::EKS::Addon
+    Properties:
+      AddonName: coredns
+      ClusterName:
+        Ref: Cluster9EE0221C
+      AddonVersion: v1.8.4-eksbuild.1
+      ResolveConflicts: OVERWRITE
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/core-dns
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Analytics: v2:deflate64:H4sIAAAAAAAA/31Ry27CMBD8lt6NK6jUnqMcWugDBB9QGWeTLDhr5F2DUJR/rx1UaHvoaR+endkdz/TDk57emRNPbLWfONzqfiPG7tUa2MdgQaW3zx5Np/u1d6DKmsa48g7tOZe3bE4shiysgq/RwaBgz7ovXWSBoIoTF1Fa9Rq3EAgE+N0Q1sCiPnwFTfDxkFluxQu4rmxNELU8AM2r0hOBlUR/xCoxJnBRVZ6SkJ2lxcHGgHJ+/mb6vzGnJgDzoEwUz9Y4pEb3aUW/uRTXsTcTybZJvcYmBiPoadT+Ax0GVaZTfXf1Lpv1I19GOUQZFxk9zuaZYDrI9vwevd5YMIMkeJNU8sCC872UPNI7vj9OH/U0/+COESchkmAHen2JX9QQ12XdAQAA
+    Metadata:
+      aws:cdk:path: EksWithWorkerNodeStack/CDKMetadata/Default
+Outputs:
+  ClusterConfigCommand43AAE40F:
+    Value:
+      Fn::Join:
+        - ""
+        - - "aws eks update-kubeconfig --name "
+          - Ref: Cluster9EE0221C
+          - " --region us-east-1 --role-arn "
+          - Fn::GetAtt:
+              - AdminRole38563C57
+              - Arn
+  ClusterGetTokenCommand06AE992E:
+    Value:
+      Fn::Join:
+        - ""
+        - - "aws eks get-token --cluster-name "
+          - Ref: Cluster9EE0221C
+          - " --region us-east-1 --role-arn "
+          - Fn::GetAtt:
+              - AdminRole38563C57
+              - Arn
+  Region:
+    Value: us-east-1
+  ClusterVersion:
+    Value: "1.21"
+Parameters:
+  SsmParameterValueawsserviceeksoptimizedami121amazonlinux2recommendedimageidC96584B6F00A464EAD1953AFF4B05118Parameter:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /aws/service/eks/optimized-ami/1.21/amazon-linux-2/recommended/image_id
+  BootstrapVersion:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /cdk-bootstrap/hnb659fds/version
+    Description: Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]
+Rules:
+  CheckBootstrapVersion:
+    Assertions:
+      - Assert:
+          Fn::Not:
+            - Fn::Contains:
+                - - "1"
+                  - "2"
+                  - "3"
+                  - "4"
+                  - "5"
+                - Ref: BootstrapVersion
+        AssertDescription: CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.
+

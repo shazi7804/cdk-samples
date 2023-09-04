@@ -15,7 +15,7 @@ export class MicrosoftAdStack extends cdk.Stack {
             password: '1qaz@WSX3edc$RFV',
             vpcSettings : {
                 subnetIds : vpc.selectSubnets({
-                    subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+                    subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
                     onePerAz: true,
                 }).subnetIds,
                 vpcId : vpc.vpcId

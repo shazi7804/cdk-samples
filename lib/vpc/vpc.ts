@@ -27,7 +27,7 @@ export class VpcSimpleCreate extends cdk.Stack {
     constructor(scope: Construct, id: string, props: VpcSimpleCreateProps) {
         super(scope, id, props);
         const vpc = new ec2.Vpc(this, 'Vpc', {
-            cidr: props.cidr || "10.0.0.0/16",
+            ipAddresses: ec2.IpAddresses.cidr(props.cidr || "10.0.0.0/16"),
             maxAzs: 2,
             natGateways: 1,
             subnetConfiguration: [
@@ -39,7 +39,7 @@ export class VpcSimpleCreate extends cdk.Stack {
                 {
                     name: "PrivateSubnet",
                     cidrMask: 20,
-                    subnetType: ec2.SubnetType.PRIVATE_WITH_NAT
+                    subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
                 },
                 {
                     name: "IsolatedSubnet",
